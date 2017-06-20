@@ -1,0 +1,889 @@
+https://hortonworks.com/services/training/certification/exam-objectives/#hdpcdspark
+
+https://spark.apache.org/docs/1.6.2/sql-programming-guide.html#creating-dataframes
+
+
+
+DataFrame 
+-------------
+counting records by order status - from .csv file
+------------------------------------
+
+input path: /user/madhanrajuj2/sqoop_import/orders - fields separated by ","
+output path: /user/madhanrajuj2/results/order_status - output separated by tab.
+
+
+# Using spark native sql
+---------------------------------
+
+from pyspark.sql import SQLContext,Row
+sqlContext = SQLContext(sc)
+
+
+textfile = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+RDDtext = textfile.map(lambda l: l.split(","))
+ordersRDD = RDDtext.map(lambda p: Row(orderID=int(p[0]),orderDate=p[1],orderAmount=int(p[2]),orderStatus=p[3]))
+
+schemaordersRDD = sqlContext.createDataFrame(ordersRDD)
+schemaordersRDD.registerTempTable("ordersRDD")
+
+res = sqlContext.sql("SELECT orderStatus, count(*) FROM ordersRDD group by orderStatus order by count(*)")
+for i in res.collect():
+ print i
+
+res1=res.map(lambda x: (x[0] + "|" + str(x[1]))) 
+//*********we have to convert int to str or else it will return error
+for i in res1.collect():
+ print i
+
+-----------------------------
+
+v=schemaordersRDD.filter(schemaordersRDD['orderStatus'] == 'CLOSED').count()
+str(v).show()
+
+
+Reading Json data file
+-------------------------
+vi departments.json
+
+{"department_id":2, "department_name":"Fitness"}
+{"department_id":3, "department_name":"Footwear"}
+{"department_id":4, "department_name":"Apparel"}
+{"department_id":5, "department_name":"Golf"}
+{"department_id":6, "department_name":"Outdoors"}
+{"department_id":7, "department_name":"Fan Shop"}
+{"department_id":8, "department_name":"TESTING"}
+{"department_id":8000, "department_name":"TESTING"}
+
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+
+# Create the DataFrame
+df = sqlContext.read.json("file:///home/madhanrajuj2/departments.json")
+
+df.show()
+df.printSchema()
+df.select("department_id").show()
+df.select(df["department_id"] + 1,df["department_name"]).show()
+df.filter(df['department_id'] > 5).show()
+df.groupby(df['department_name']).count().show()
+
+
+------------
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+
+# Create the DataFrame
+df = sqlContext.read.json("file:///home/madhanrajuj2/departments.json")
+#df = sqlContext.createDataFrame(df) # "df" already a data frame
+df.registerTempTable("dept")
+
+res = sqlContext.sql("select * from dept where department_id > 4")
+for i in res.collect():
+ print i
+
+to save json file in to hdfs --writing back to hdfs
+-----------------------------
+res.toJSON().saveAsTextFile("/user/madhanrajuj2/results/department")
+
+
+
+----------------------------------
+Reading a hive table
+-----------------------------------
+
+from pyspark.sql import HiveContext
+sc = SparkContext()
+sqlContext = HiveContext(sc)
+res = sqlContext.sql("select * from madhan.orders")
+for i in res.collect():
+ print i.order_id,i.order_date
+
+
+res.show()
+res.printSchema()
+res.filter((res.order_id > 20) & (res.order_id < 25)).show()
+
+res.filter((res.order_status == 'PENDING_PAYMENT')).count()
+
+writing a result back to hive table
+---------------------------------------------------
+res = sqlContext.sql("create table madhan.orderComplete as select * from madhan.orders where order_status = 'COMPLETE'")
+
+
+***-
+filter operator
+-----------------
+& - and
+| - or
+~ - Not
+== - equal
+!= - NotEqual
+
+in filter we can use '&' (for AND); '|' (FOR OR); '~' (for not)
+
+res.filter((res.order_id < 100) & (res.order_status != 'CLOSED')).show()
+
+
+RDD
+-------------------------------------------
+Finding revenu perday and order count
+-------------------------------------------
+hive:
+
+select o.order_date, sum(oi.order_item_subtotal), count(distinct o.order_id)
+from orders o join order_items oi on o.order_id = oi.order_item_order_id
+group by o.order_date
+order by o.order_date;
+
+using HiveContext()
+-----------------------
+vi orderperday.py
+
+from pyspark import HiveContext,SparkContext
+sc = SparkContext()
+sqlContext =HiveContext(sc)
+sqlContext.sql("set spark.sql.shuffle.partitions = 10")
+res = sqlContext.sql("select o.order_date, sum(oi.order_item_subtotal), count(distinct o.order_id) from madhan.orders o join madhan.order_items oi on o.order_id = oi.order_item_order_id group by o.order_date order by o.order_date")
+#for i in res.collect():
+# print i
+res1 = res.map(lambda x: x[0] + "," +str( x[1]) + "," + str(x[2]))
+for i in res1.collect():
+ print i
+
+
+
+pyspark: Using RDD
+----------------------------
+
+ordersRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+order_itemsRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/order_items")
+
+ordersRDDMap = ordersRDD.map(lambda x: (x.split(",")[0],x.split(",")[1]))
+
+order_itemsRDDMap = order_itemsRDD.map(lambda x: (x.split(",")[1],x.split(",")[5]))
+
+ordersJoined = order_itemsRDDMap.join(ordersRDDMap)
+
+
+
+ordersperday = ordersJoined.map(lambda x: (x[1][1],x[0])).distinct()
+ordersperday.count()
+ordersperdaycount = ordersperday.map(lambda x: (x[0],1))
+ordercountperday = ordersperdaycount.reduceByKey(lambda x,y: x+y)
+
+revperday = ordersJoined.map(lambda x: (x[1][1],float(x[1][0])))
+rev = revperday.reduceByKey(lambda x,y:(x+y))
+
+result = rev.join(ordercountperday)
+
+for i in result.sortByKey().collect():
+ print i
+
+
+output:
+--------------------------------------------------------
+2014-07-24 00:00:00.0   64680.3115978241        165
+----------------------------------------------------------
+
+
+using UDF
+-------------------------------
+//UDF function "multiply" defind in python program and used with sparkSQL
+//which just multiply's department_id * departmenet_id
+
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+
+# Create the DataFrame
+df = sqlContext.read.json("file:///home/madhanrajuj2/departments.json")
+
+df.registerTempTable("dept")
+
+sqlContext.registerFunction("multiply",lambda var1:(var1*var1))
+
+res = sqlContext.sql("select department_id,department_name, mul(department_id)as departMult  from dept")
+for i in res.collect():
+ print i
+
+res.write.json("/user/madhanrajuj2/results/JsonSparkResult1")
+res.toJSON().saveAsTextFile("/user/madhanrajuj2/results/JsonSparkResult")
+
+
+
+hadoop fs -cat /user/madhanrajuj2/results/JsonSparkResult1/par*
+
+
+
+
+File formats
+-------------------------------------------------
+parquet
+--------------
+from pyspark import SQLContext,Row
+ordersRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+ordersRDDMap = ordersRDD.map(lambda x: x.split(","))
+ordersRDD = ordersRDDMap.map(lambda x: Row(order_id = int(x[0]),order_date = x[1],order_cust_id = int(x[2]),order_status=x[3]))
+schemaorders = sqlContext.createDataFrame(ordersRDD)
+
+# DataFrames can be saved as Parquet files, maintaining the schema information.
+sqlContext.setConf("spark.sql.parquet.compression.codec","snappy")
+schemaorders.write.parquet("/user/madhanrajuj2/sqoop_import/orders")
+
+# Parquet files can also be registered as tables and then used in SQL statements.
+ordersParquetData.registerTempTable("orderParquet")
+
+result = sqlContext.sql("select * from orderParquet where order_status = 'CLOSED'")
+
+for i in result.map(lambda x: (x[0],x[1],x[2],x[2])).take(10): print i
+
+
+hadoop fs -mkdir /user/madhanrajuj2/results
+
+
+Avro
+------------
+pyspark --packages com.databricks:spark-avro_2.10:2.0.1
+-------------
+important to start pyspark with above command
+
+from pyspark import SQLContext,Row
+
+ordersRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+ordersRDDMap = ordersRDD.map(lambda x: x.split(","))
+ordersRDD = ordersRDDMap.map(lambda x: Row(order_id = int(x[0]),order_date = x[1],order_cust_id = int(x[2]),order_status=x[3]))
+schemaorders = sqlContext.createDataFrame(ordersRDD)
+
+sqlContext.setConf("spark.sql.avro.compression.codec","snappy")
+
+//writing to disk
+schemaorders.write.format("com.databricks.spark.avro").save("/user/madhanrajuj2/sqoop_import/ordersAVRO")
+
+/reading from disk
+df = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/sqoop_import/ordersAVRO/par*")
+
+df.registerTempTable("orderavro")
+
+result = sqlContext.sql("select * from orderavro where order_status = 'CLOSED' ")
+
+for i in result.take(10): print i
+//for i in result.map(lambda x: (x[0],x[1],x[2],x[2])).take(10): print i
+
+----------------------
+Reading as avro and saving as textFile
+//Reading a avro file and processing it and storing the result back in hadoop in csv form
+-------------------------------------------------------------
+df.write.format("com.databricks.spark.avro").save("/user/madhanrajuj2/sqoop_import/ordersAVRO3")
+df = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/sqoop_import/ordersAVRO3/par*")
+df.registerTempTable("orderavro3")
+result = sqlContext.sql("select order_status,count(*) as StatusCount from orderavro3 group by order_status order by StatusCount")
+result.show()
+res = result.map(lambda x: (x[0]+","+str(x[1])))
+res.saveAsTextFile("/user/madhanrajuj2/sqoop_import/orderCountResult6.txt")
+
+
+
+hadoop fs -ls /user/madhanrajuj2/sqoop_import/orderCountResult6.txt/par*
+
+hadoop fs -cat /user/madhanrajuj2/sqoop_import/orderCountResult6.txt/par*
+hadoop fs -rm /user/madhanrajuj2/sqoop_import/orderCountResult*
+
+ORC
+------
+from pyspark import SQLContext,Row
+
+ordersRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+ordersRDDMap = ordersRDD.map(lambda x: x.split(","))
+ordersRDD = ordersRDDMap.map(lambda x: Row(order_id = int(x[0]),order_date = x[1],order_cust_id = int(x[2]),order_status=x[3]))
+schemaorders = sqlContext.createDataFrame(ordersRDD)
+
+sqlContext.setConf("spark.sql.orc.compression.codec","BZip2Codec")#"snappy"
+
+schemaorders.write.orc("/user/madhanrajuj2/sqoop_import/ordersORC3")
+
+dforc = sqlContext.read.orc("/user/madhanrajuj2/sqoop_import/ordersORC3")
+
+dforc.show()
+dforc.printSchema()
+dforc.filter(dforc.order_status == 'CLOSED').show()
+dforc.show()
+
+for i in dforc.take(10): print i
+
+############################################################
+
+Input - Parquet
+Output - Json
+
+Reading Parquet file and processing the file and saving the results back in JSON format
+-----------------------------------------------------------------------------------------
+
+from pyspark import SQLContext,SparkContext,Row
+sqlContext.read.parquet("/user/madhanrajuj2/sqoop_import/order_itemsParquet").registerTempTable("order_items")
+sqlContext.read.parquet("/user/madhanrajuj2/sqoop_import/ordersParquet").registerTempTable("orders")
+
+sqlContext.setConf("spark.sql.shuffle.partitions", "10")
+result = sqlContext.sql("select o.order_date as order_date , round(sum(oi.order_item_subtotal),2) as SUM, count(distinct o.order_id) as OrderCount from orders o join order_items oi on o.order_id = oi.order_item_order_id group by o.order_date order by o.order_date").show()
+
+result.write.json("/user/madhanrajuj2/results1/revenuperdayjson")
+
+for i in result.collect(): print i
+
+
+
+---------------------------------------------------------------------------------------------------
+
+Questions:
+how many distinct cities are there in each state. This could be done with countByKey and also aggregateByKey. 
+
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+For 24 videos - Revised syllabus---
+Info on file format:
+------------------------
+https://www.youtube.com/watch?v=QC1gFfTwrhM
+
+import org.apache.spark.sql.SQLContext
+val sqlContext = new SQLContext(sc)
+
+//read data from "objectFile"
+
+//using textFile - we can read data from directory, files with "*.txt" and form compressed file format
+JSON, Avro, Parquet, ORC - most commond file formats
+
+case class Order(
+ order_id: Int,
+ order_date: String,
+ order_customer_id: Int,
+ order_status: String)
+
+//watch 14 - dataframe and sql video
+
+val orders = sc.textFile("/public/retail_db/orders").
+	map(rec => {
+	val r = rec.split(",")
+	Order(r(0).toInt, r(1),r(2).toInt,r(3))
+	}).
+	toDF()
+
+orders.write.parquet("/user/madhanrajuj2/orders_parquet")
+orders.write.json("/user/madhanrajuj2/orders_json")
+
+orders.registerTempTable("orders")
+
+import sqlCOntext.implicits._
+sqlContext.sql("select * from orders limit 10").show
+
+val ordersByStatus = sqlContext.sql("select order_status, count(1) count_by_status from orders group by order_status")
+
+ordersByStatus.show
+
+ordersByStatus.write.json("/user/madhanrajuj2/orders_by_status_json")
+
+sqlContext.setConf("spark.sql.shuffle.partitions", "2")
+
+sqlContext.read.json("/user/madhanrajuj2/orders_by_status_json")
+
+//any time we can convert dataframe to temp table
+
+sqlContext.read.json("/user/madhanrajuj2/orders_by_status_json").registerTempTable("x")
+
+sqlContext.sql("select * from x").show
+
+***************
+//cloudera comes outof the box for avro format
+sqlContext.read.
+
+********
+//of HDP we if need to practice avro we need to start spark-shell as followes
+spark-shell --packages com.databricks:spark-avro_2.10:2.0.1
+
+com.databricks - group id
+spark-avro_2.10 - artifact id
+2.0.1 - spark avro version compatable with spark 1.6
+
+
+
+val sqlContext =new org.apache.spark.sql.SQLContext(sc) //pointing to native sqlContext
+import sqlCOntext.implicits._
+
+val orders = sc.textFile("/public/retail_db/orders").
+	map(rec => {
+	val r = rec.split(",")
+	Order(r(0).toInt, r(1),r(2).toInt,r(3))
+	}).
+	toDF()
+
+//write is available on dataframe
+//read is availabel on sqlContext
+
+orders.registerTempTable("orders")
+
+val ordersByStatus = sqlContext.sql("select order_status, count(1) count_by_status from orders group by order_status")
+
+import com.databricks.spark.avro._
+sqlCOntext.set("spark.sql.shuffle.partitions","2")
+ordersByStatus.write.avro("/user/madhanrajuj2/orders_by_status_avro")
+sqlCOntext.read.avro("/user/madhanrajuj2/orders_by_status_avro").show
+
+
+compression codec will be available for parquet,avro,orc; 
+**not available for json and other format
+
+sqlContext.setConf("spark.sql.parquet.compression.codec","snappy")
+
+sqlContext.getConf("spark.sql.parquet.compression.codec")
+parquet default is "gzip"
+supports 
+--------------
+snappy, gzip, lzo
+
+//whether data is compressed or not we use same command to read the data
+
+//supported file format outof the box are json, orc, Parquet, and avro (we need to start with appropriate databricks for avro "com.databricks:spark-avro_2.10:2.0.1")
+
+//data may be given in parquet format and need to save in json format or from json to parquet
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------
+1---------------------------------------------------------------------------------------------------------------------
+
+counting records by order status - from .csv file
+------------------------------------
+
+input path: /user/madhanrajuj2/sqoop_import/orders - "," separated
+output path: /user/madhanrajuj2/results/order_status - output as textfile separated by tab and compression set to GzipCodec.
+
+
+from pyspark import SparkContext,SQLContext, Row
+sqlContext = SQLContext(sc)
+
+sqlContext.setConf("set spark.sql.shuffle.partitions","2")
+
+ordersRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+ordersMap = ordersRDD.map(lambda rec: rec.split(","))
+orders = ordersMap.map(lambda rec: Row(orderId = int(rec[0]),order_date = rec[1], order_cust_id = int(rec[2]), order_status = rec[3] ))
+schemaOrders = sqlContext.createDataFrame(orders)
+schemaOrders.registerTempTable("orders1")
+res = sqlContext.sql("select order_status, count(*) as Status_count from orders1 group by order_status order by order_status")
+
+res.map(lambda rec: rec[0] + "\t" + str(rec[1])).saveAsTextFile("/user/madhanrajuj2/results/order_status1",compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+
+resRDD = sc.textFile("/user/madhanrajuj2/results/order_status1")
+resMap = resRDD.map(lambda x: x.split("\t"))
+for i in resMap.collect():
+ print i
+
+
+
+hadoop fs -ls /user/madhanrajuj2/results/order_status1/
+hadoop fs -cat /user/madhanrajuj2/results/order_status1/part*
+
+hadoop fs -ls /user/madhanrajuj2/results/order_status1/
+
+
+saving a text file data in "gzipCodec" compression
+---------------------------------------------------
+res.map(lambda rec: rec[0] + "\t" + str(rec[1])).saveAsTextFile("/user/madhanrajuj2/results/order_status1",compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+
+
+2
+---------------------------------------------------------------------------------------------------------------------------------
+
+Process the json file stored in file:///home/madhanrajuj2/departments.json location
+and find departments details of department_id = 4
+ouput - store the results back to hdfs location /user/madhanrajuj2/results/json_results in Json format
+
+
+from pyspark import SparkContext, SQLContext
+
+sqlContext = SQLContext(sc)
+#dataRDD = sqlContext.read.json('file:///home/madhanrajuj2/departments.json')
+dataRDD = sqlContext.read.json('/user/madhanrajuj2/sqoop_import/departments.json') # #above "dataRDD" is a dataframe; no need to use "createDataFrame" statement
+#schemaData = sqlContext.createDataFrame(dataRDD)
+
+dataRDD.registerTempTable("departments")
+res = sqlContext.sql("select * from departments where department_id = 4")
+
+res.toJSON().saveAsTextFile("/user/madhanrajuj2/results/json_results",compressionCodecClass = "org.apache.hadoop.io.compress.GzipCodec")
+
+dataRDD.filter(dataRDD['department_id'] == 4).show()
+dataRDD.show()
+dataRDD.printSchema()
+dataRDD.select(dataRDD['department_id']).show()
+dataRDD.filter(dataRDD['department_id'] == 5).show()
+dataRDD.groupby(dataRDD.department_id).count().show()
+_________________________-------------------------------------------
+
+hadoop fs -put departments.json /user/madhanrajuj2/sqoop_import/
+
+hadoop fs -ls /user/madhanrajuj2/sqoop_import/
+hadoop fs -ls /user/madhanrajuj2/results/json_results
+hadoop fs -rm -R /user/madhanrajuj2/results/json_results
+---------------------------------------------------------------------
+
+3..-
+Read data from hive table "orders" and filter "complete and closed" records and load it into another table called orders_result;
+-----------------------------------------------------------------------------------------------------------
+
+from pyspark import SparkContext, HiveContext, SQLContext
+
+sqlContext = HiveContext(sc)
+res = sqlContext.sql("create view madhan.results11 as select * from madhan.orders where order_status like 'COM%' or order_status like 'CLO%'")
+sqlContext.sql("drop table madhan.orders_result1")
+sqlContext.sql("create table madhan.orders_result1 as select * from madhan.results11")
+
+//if table is already existing than use following statement
+
+sqlContext.sql("insert into madhan.orders_result1 select * from madhan.results11")
+
+select * from madhan.orders_result1 
+
+drop view madhan.results1
+
+
+4........
+-----------------------------------------------------------------
+
+find the revenu and no. of orders per day:
+output - save result under /user/madhanraju/results/Problem_3 with tab separated
+
+tables: orders and order_items
+
+from pyspark import SparkContext, HiveContext, SQLContext
+
+sqlContext = HiveContext(sc)
+sqlContext.setConf("set spark.sql.shuffle.partitions","2")
+
+res = sqlContext.sql("select o.order_date, sum(oi.order_item_subtotal), count(distinct o.order_id) from madhan.orders o join madhan.order_items oi group by o.order_date order by o.order_date")
+
+res.map(lambda rec: rec[0] +"\t"+ str(rec[1])+"\t"+ str(rec[2])).saveAsTextFile("/user/madhanraju/results/Problem_3")
+
+
+hadoop fs -ls /user/madhanraju/results/Problem_3 
+
+5...
+--------------------------------------------------
+count no.of order for each and every day(parquet file format)
+--------------------------------------------------
+input : /user/madhanrajuj2/sqoop_import/ordersParquet
+output: /user/madhanrajuj2/results/ordersParquetCount
+                    and
+        /user/madhanrajuj2/results/ordersTextFileCount --result in textfile format with compression set to GzipCodec
+ 
+
+
+from pyspark import SparkContext, SQLContext
+sqlContext = SQLContext(sc)
+sqlContext.setConf("spark.sql.shuffle.partitions","5")
+df = sqlContext.read.parquet("/user/madhanrajuj2/sqoop_import/ordersParquet")
+
+
+df.registerTempTable("orderTab")
+
+result = sqlContext.sql("select o.order_date, count(distinct o.order_id) as order_count from orderTab o group by o.order_date order by o.order_date")
+
+//storing the result in parquet format with compression set to "gzip"
+sqlContext.setConf("spark.sql.parquet.compression.codec","gzip")
+result.write.parquet("/user/madhanrajuj2/results/ordersParquetCount")
+//storing the result in textfile format with compression set to GzipCodec
+result.map(lambda rec: rec[0] +"\t"+ str(rec[1])).saveAsTextFile("/user/madhanrajuj2/results/ordersTextFileCount",compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+
+
+
+6.
+-------------------------------------------------------------
+Read ORC file and find the order status 
+input - /user/madhanrajuj2/sqoop_import/ordersORC3
+output - /user/madhanrajuj2/results/ordersORCorderStatus_text
+                   and
+         /user/madhanrajuj2/results/ordersORCorderStatus_orc  
+-------------------------------------------------------------
+
+from pyspark import SparkContext, SQLContext
+sqlContext = HiveContext(sc) //orc datafile can be processed using only HiveContext()
+df = sqlContext.read.orc("/user/madhanrajuj2/sqoop_import/ordersORC3")
+
+df.registerTempTable("ordersorc")
+result = sqlContext.sql("select o.order_status as order_status, count(*) as OrderStatus_count from ordersorc o group by order_status order by order_status")
+
+result.map(lambda rec: rec[0] +"\t" + str(rec[1])).saveAsTextFile("/user/madhanrajuj2/results/ordersORCorderStatus_text")
+
+result.write.orc("/user/madhanrajuj2/results/ordersORCorderStatus_orc")
+sqlContext.setConf("spark.sql.orc.compression.codec","BZip2Codec")
+result.write.orc("/user/madhanrajuj2/results/ordersORCorderStatus_orc_BZip2Codec")
+
+//to overwrite the existing file in the HDFS
+use - mode("overwrite")
+result.write.format("orc").mode("overwrite").save("/user/madhanrajuj2/results/ordersORCorderStatus_orc_BZip2Codec")
+
+7.
+---------------------------------------------------------------
+Read the avro file and find the count of order status and save the result in textformat with tab separated values
+
+Input - /user/madhanrajuj2/sqoop_import/ordersAVRO3
+output - /user/madhanrajuj2/results/ ordersAVROOrderStatus
+
+from pyspark import SQLContext,SparkContext
+sqlContext = SQLContext(sc)
+df = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/sqoop_import/ordersAVRO3")
+df.registerTempTable("orderAvro")
+result = sqlContext.sql("select o.order_status, count(order_id) as status_count from orderAvro o group by o.order_status order by o.order_status")
+result.map(lambda rec: rec[0] +"\t"+str(rec[1])).saveAsTextFile("/user/madhanrajuj2/results/ordersAVROOrderStatus")
+
+8.
+-----------------------------------------------------------------------------------------------------------------
+
+write script to connect to database and retrive orders and order_items table and 
+find no. of orders per day and total revenue per day
+output - /user/madhanrajuj2/results/orderRevenuTXT ;with fields separated by ","
+      --saving the result as textfile with compression set to GzipCodec
+      -- saving the result as textfile
+      -- save the result as sequenceFile() - it has to be in (Key,value) - pair or else it will report an error
+------------------------------------------------------------------------------------------------------------------
+
+from pyspark import SparkContext, SQLContext
+
+sqlContext = SQLContext(sc)
+sqlContext.setConf("spark.sql.shuffle.partitions","10")
+jdbcurl = "jdbc:mysql://nn01.itversity.com/retail_db?user=retail_dba&password=itversity"
+ordersdf = sqlContext.read.format('jdbc').options(url = jdbcurl,dbtable='orders').load()
+order_itemsdf = sqlContext.read.format('jdbc').options(url = jdbcurl,dbtable='order_items').load()
+ordersdf.registerTempTable("orders")
+order_itemsdf.registerTempTable("order_items")
+result = sqlContext.sql("select o.order_date, sum(oi.order_item_subtotal), count(distinct o.order_id) from orders o join order_items oi on o.order_id = oi.order_item_order_id group by o.order_date order by o.order_date")
+res = result.map(lambda rec: str(rec[0])+","+str(rec[1])+","+ str(rec[2]))
+
+res.saveAsTextFile("/user/madhanrajuj2/results/orderRevenuTXT",compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+res.saveAsTextFile("/user/madhanrajuj2/results/orderRevenuTXT1")
+
+---------------------------------------------
+//to save as sequence file we need to use (K,V) pair or else we can use 
+(none,x) --(k-none,value-x)
+((x),'') - (key - x,value - '')
+-------------------------------------------
+res.map(lambda x: ((x),'')).saveAsSequenceFile("/user/madhanrajuj2/results/orderRevenuSeq")
+
+data = sc.sequenceFile("/user/madhanrajuj2/results/orderRevenuSeq")
+for i in data.take(10): print i
+
+
+------------------------------------------
+note:
+res.map(lambda x: (x.split(",",1))).map(lambda x: (x[0],x[1])).saveAsSequenceFile("/user/madhanrajuj2/results/orderRevenuSeq")
+
+res.map(lambda x: (x.split(",",1))) //retruns an array elements; convert this in to tuples
+o/p: ['2013-07-25 00:00:00', '68153.83,116'] --returns an array; 
+convert it in to tuples of (k,v) pair
+map(lambda x: (x[0],x[1])) and save it as sequence file
+
+if compression is required
+res.map(lambda x: (x.split(",",1))).map(lambda x: (x[0],x[1])).saveAsSequenceFile("/user/madhanrajuj2/results/orderRevenuSeq1",compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+-------------------------------------------------------------------------
+
+********
+
+important:
+
+Spark 2.0+
+correlated and uncorrelated subqueries
+
+Spark < 2.0
+Spark supports subqueries in the FROM clause
+
+SELECT col FROM (SELECT *  FROM t1 WHERE bar) t2  --on spark 1.6 works
+
+-----------------
+
+result = sqlContext.sql("select Status,count(*),sum(tot) 
+			from (select * 
+				from (select o.order_id as order_id, o.order_date as order_date, o.order_customer_id as order_customer_id,o.order_status as Status, oi.order_item_subtotal as tot 
+					from orders o 
+					join order_items oi on o.order_id = oi.order_item_order_id where oi.order_item_subtotal > 500) 
+			     a) 
+			b group by Status order by count(*)")
+
+result1 = result.map(lambda rec: str(rec[0]) +'\t'+str(rec[1]) +'\t'+str(rec[2]))
+for i in result1.take(200): print i
+--------------------
+
+
+File format handling
+=============================================================
+
+textFile format
+==============================
+==============================
+to read:
+---------------------------
+sc.textFile("/path")
+
+to save:
+---------------------------
+data.saveAsTextFile("/path")
+
+
+to save in compressed format - GzipCodec
+---------------------------
+data.saveAsTextFile("/path",compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+
+
+JSON format:
+======================
+======================
+to read:
+---------
+sqlContext.read.json("/path")
+
+to write:
+----------
+df.toJSON().saveAsTextFile("/path")
+
+to write in compressed format:
+--------------------------------
+df.toJSON().saveAsTextFile("/path",compressionCodecClass="org.apache.hadoop.io.comress.GzipCodec")
+
+Avro format:
+===================
+=====================
+to read: on HDP
+---------------
+sqlContext.read.format("com.databricks.spark.avro").load("/ordersAVRO3")
+
+Read on cloudera:
+-------------
+sqlContext.read.avro("/ordersAVRO3")
+
+Save on Cloudera:
+--------------------
+df.write.avro("/path")
+
+to save on cloudera in compressed format:
+---------------------------
+sqlContext.setConf("spark.sql.avro.compression.codec","snappy")
+df.write.avro("/path")
+
+to overwrite the existing file - save mode
+----------------------------------------------
+df.write.format("avro").mode("overwrite").save("/path/to/file")
+
+Parquet format:
+===================
+====================
+to Read:
+---------
+sqlContext.read.parquet("/path")
+
+to save the Parquet file
+------------------------
+df.write.parquet("/path")
+
+to save the parquet file in compressed format:
+-------------------------------------------------
+sqlContex.setConf("spark.sql.parquet.compression.codec","gzip")
+df.write.parquet("/path")
+
+to overwrite the existing file - save mode
+----------------------------------------------
+df.write.format("parquet").mode("overwrite").save("/path/to/file")
+
+orc format: Optimized Row Columnar(ORC)
+=======================================
+=======================================
+to read:
+-----------
+sqlContext.read.orc("/path")
+
+to write:
+---------------
+result.write.orc("/path")
+df.write.orc("/path")
+
+to write in compressed format:
+---------------------------------
+sqlContext.setConf("spark.sql.orc.compression.codec","BZip2Codec")
+df.write.orc("/path")
+
+to overwrite the existing file - save mode
+----------------------------------------------
+df.write.format("orc").mode("overwrite").save("/path/to/file")
+
+
+
+
+
+UDF
+------------
+//UDF function "multiply" defind in python program and used with sparkSQL
+//which just multiply's department_id * departmenet_id
+
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+
+# Create the DataFrame
+df = sqlContext.read.json("file:///home/madhanrajuj2/departments.json")
+
+df.registerTempTable("dept")
+
+#UDF function "multiply" created 
+sqlContext.registerFunction("multiply",lambda var1:(var1*var1)) 
+
+
+
+res = sqlContext.sql("select department_id,department_name, mul(department_id)as departMult  from dept")
+for i in res.collect():
+ print i
+
+res.toJSON().saveAsTextFile("/user/madhanrajuj2/results/JsonSparkResult")
+
+hadoop fs -cat /user/madhanrajuj2/results/JsonSparkResult/par*
+
+
+
+//UDAF - userdefined analytical functions
+
+----------------------------------------
+Date function
+------------------------------------------
+import datetime
+print(
+    datetime.datetime.fromtimestamp(
+        int("1284101485")
+    ).strftime('%Y-%m-%d %H:%M:%S')
+)
+In this code datetime.datetime can look strange, but 1st datetime is module name and 2nd is class name. So datetime.datetime.fromtimestamp() is fromtimestamp() method of datetime class from datetime module
+
+
+
+Questions:
+===========================
+So in my case there was sqoop, Spark, and using spark access hive table perform transformation and write back result in another table.
+
+If tables are to be joined etc then yes PK/FK will be mentioned.
+You can also expect the schema of the content in some cases.
+You are correct, sparkSQL does make life easier and since the approach to be used is not mentioned, better to go with dataframes or sqlContext/HiveContext.
+Please go through https://www.youtube.com/watch?v=QC1gFfTwrhM18 for different file formats and compressions. Very important.
+Regarding metastore, you can expect both metastore as a source as well as a sink. HiveContext related things.
+
+Again as i said earlier, in 2Hrs, 9-11 questions to be solved and since the time is just enough to solve all the questions, expect easy to medium complicity questions.
+Pass percentage they say 70%. I guess then it has to be (N x 70/100) to clear the exam.
+
+I did not get any template. But since cloudera says template might be provided, they actually might for some questions.
+I would recommend to prepare for CCA without template in mind.
+For the exam solutions, it doesn't really matter what we use to get the output as long as we get the output as per requirements.
+I felt Scala easier and hence prepared for Scala.
+If you feel Python would work for you then please proceed with Python.
+Its the final output and where the output is saved that matters.
+
+It was same as described by others. 2 on sqoop and 7 on spark. no template. you can use any language. No kafka flume. I prefer spark sql with dataframes, over rdds.
+
+
