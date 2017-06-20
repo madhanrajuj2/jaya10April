@@ -1,0 +1,546 @@
+35.154.247.234
+r
+
+\\172.16.51.69
+
+./training
+brillio@1234
+
+What is Git?
+        Source Code mgmt system
+        
+
+Why Do need SCM, VCS, SR.
+        WHO
+        WHAT
+        WHY
+        WHEN
+==================
+        VERSIONING
+
+How to use it?
+-----------------------
+How to install git?
+        WINDOWS - gitbash(command line)+sourcetree(atl)
+        LINUX - RHEL > sudo yum install git
+        LINUX - UBUNTU > sudo apt-get install git
+
+> git setup windows command line
+> git git bash command line
+
+How to verify?
+> git
+
+How to know the git version?
+> git --version
+
+How to start working?
+RULE 1- You need to have a repository?
+> cd /c                        #Go to C Drive
+> mkdir git-repo        #Create a dir name
+> cd git-repo                #Get inside a git-repgeo
+> mkdir git1                #create a git1 direct
+> cd git1
+> git init
+
+RULE 2- Add a file.
+>git add filename
+
+RULE 3- Who are you before the commit?
+Name
+> git config user.name "Rajesh Kumar"
+Email - 
+> git config user.email "DevOps@RajeshKumar.xyz"
+
+Where is my name and email address?
+> git config --list
+
+RULE 4- How to commit?
+> git commit -m"This is my first commit"
+
+Rule 5 - How to see number of commits?
+> git log
+
+How to check the status of my workspace?
+> git status
+
+> to add all files
+>git add .
+
+git show <checksum> ---to check what is committed
+
+git mv filename
+git mv dirname
+git rm filename
+
+git checkout <"checksum"> -if we want to move back to previous state we need to use 
+with previous checksum value to move forward we need to use 
+"git checkout mster" --it will have complete history and previous state will be restored
+
+
+git checkout master
+
+git log --oneline -- to get the log in short form along with checksum values
+24d59f0 moving the dir
+8c3bb0e f7.txt
+ec69249 f6.txt
+80f04a0 file1
+a14f6da modified
+0094170 with in dir
+d50880e 2nd commit
+3fe37c1 1st commit
+
+git checkout "8c3bb0e"  --previous state restored
+
+git checkout master -- "master" will have all commits
+
+
+$ git log HEAD
+-----------------------------------
+commit 24d59f08cbf2ce54f7a0e7d1e1452042dd1ce6b3
+Author: madhan <madhan.j@brillio.com>
+Date:   Mon Apr 10 02:52:30 2017 -0700
+
+    moving the dir
+
+commit 8c3bb0e9f94d824451127b64e52ea4cc7d2dc848
+Author: madhan <madhan.j@brillio.com>
+Date:   Mon Apr 10 02:49:16 2017 -0700
+
+    f7.txt
+
+commit ec692498deb2a87d24bbfb4ff3ca30e837b62279
+Author: madhan <madhan.j@brillio.com>
+Date:   Mon Apr 10 02:47:59 2017 -0700
+
+    f6.txt
+
+commit 80f04a058a849955228bffcb7a8fc047dbe92e04
+Author: madhan <madhan.j@brillio.com>
+Date:   Mon Apr 10 02:33:15 2017 -0700
+
+    file1
+
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ newdir/it show H
+
+bash: newdir/it: No such file or directory
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git show HEAD~
+---------------------
+commit 8c3bb0e9f94d824451127b64e52ea4cc7d2dc848
+Author: madhan <madhan.j@brillio.com>
+Date:   Mon Apr 10 02:49:16 2017 -0700
+
+    f7.txt
+
+diff --git a/f6.txt b/f7.txt
+similarity index 100%
+rename from f6.txt
+rename to f7.txt
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git show HEAD~2
+-------------------------
+commit ec692498deb2a87d24bbfb4ff3ca30e837b62279
+Author: madhan <madhan.j@brillio.com>
+Date:   Mon Apr 10 02:47:59 2017 -0700
+
+    f6.txt
+
+diff --git a/f6.txt b/f6.txt
+new file mode 100644
+index 0000000..c47213d
+--- /dev/null
++++ b/f6.txt
+@@ -0,0 +1,3 @@
++1
++2
++
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ cat .git/HEAD
+ref: refs/heads/master
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ ^C
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$
+
+
+How to work with Remote or master repo --GITHUM
+------------------------------------------------------
+get a username/ passwrod on githum
+
+git remote add origin https://githumb.com/scmgalaxy/brillio1.git --to give alias
+git push origin master --"master" branch and "origin" alias
+
+git clone url --to get file repo from git hub
+
+git pull origin master  -- to get other commits
+
+
+ssh-keygen -- this will create a ssh key in c:/user/dir 
+------------------------------------------------------
+
+git clone git@github.com:madhanrajuj2/jaya10April.git
+--------------------------------------------------------
+
+it git we need to give ssh key under 
+settings->Deploy Keys-> give a key copyed from "id_rsa.pub" file
+
+git push -u git@github.com:madhanrajuj2/jaya10April.git master
+
+SSH: git@github.com:madhanrajuj2/jaya10April.git
+https:  https://github.com/madhanrajuj2/jaya10April.git
+
+
+=====================================================================
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git remot add origin https://github.com/madhanrajuj2/jaya10April.git
+git: 'remot' is not a git command. See 'git --help'.
+
+Did you mean this?
+        remote
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git remote add origin https://github.com/madhanrajuj2/jaya10April.git
+==========================================
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git push -u origin master  #command to push to git
+Counting objects: 24, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (15/15), done.
+Writing objects: 100% (24/24), 1.79 KiB | 0 bytes/s, done.
+Total 24 (delta 5), reused 0 (delta 0)
+remote: Resolving deltas: 100% (5/5), done.
+To https://github.com/madhanrajuj2/jaya10April.git
+ * [new branch]      master -> master
+Branch master set up to track remote branch master from origin.
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ ls
+newdir/
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git mv newdir newdir2
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        renamed:    newdir/f1.txt -> newdir2/f1.txt
+        renamed:    newdir/f2.txt -> newdir2/f2.txt
+        renamed:    newdir/f7.txt -> newdir2/f7.txt
+        renamed:    newdir/file4.txt -> newdir2/file4.txt
+        renamed:    newdir/jaya.txt -> newdir2/jaya.txt
+
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git commit -m"new dircreated"
+[master 711cfd1] new dircreated
+ 5 files changed, 0 insertions(+), 0 deletions(-)
+ rename {newdir => newdir2}/f1.txt (100%)
+ rename {newdir => newdir2}/f2.txt (100%)
+ rename {newdir => newdir2}/f7.txt (100%)
+ rename {newdir => newdir2}/file4.txt (100%)
+ rename {newdir => newdir2}/jaya.txt (100%)
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+nothing to commit, working tree clean
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ vi file12.txt
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git add file12.txt
+warning: LF will be replaced by CRLF in file12.txt.
+The file will have its original line endings in your working directory.
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   file12.txt
+
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git add
+Nothing specified, nothing added.
+Maybe you wanted to say 'git add .'?
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git commit -m"new file added file12.txt"
+[master 40e8f18] new file added file12.txt
+ 1 file changed, 3 insertions(+)
+ create mode 100644 file12.txt
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ ls
+file12.txt  newdir2/
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git push git@github.com:madhanrajuj2/jaya10April.git master
+Warning: Permanently added the RSA host key for IP address '192.30.253.113' to the list of known hosts.
+ERROR: The key you are authenticating with has been marked as read only.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git push -u git@github.com:madhanrajuj2/jaya10April.git master
+ERROR: The key you are authenticating with has been marked as read only.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$ git push -u git@github.com:madhanrajuj2/jaya10April.git master
+Counting objects: 5, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (5/5), 477 bytes | 0 bytes/s, done.
+Total 5 (delta 0), reused 0 (delta 0)
+To github.com:madhanrajuj2/jaya10April.git
+   24d59f0..40e8f18  master -> master
+Branch master set up to track remote branch master from git@github.com:madhanrajuj2/jaya10April.git.
+
+BRILLIO-TRAIN+training@BRILLIO-TRAIN MINGW64 /c/git-repo/git1 (master)
+$
+
+======================================================================
+
+devopsschools.com
+
+git/git
+
+github link
+-----------------------------------------------------------------
+https://github.com/madhanrajuj2/jaya10April/tree/master/newdir2 
+-----------------------------------------------------------------
+
+UN:madhanrajuj2
+PW:jayaram@123
+
+--allow-unrelated-histories  # to merge
+
+git pull https://github.com/scmgalaxy/brillio-team.git master --allow-unrelated-histories  --to get others code
+
+git push https://github.com/scmgalaxy/brillio-team.git master --push your code 
+
+
+git branch -a
+git branch -r
+
+git fetch remotes master
+
+==========================================================
+git fetch https://github.com/scmgalaxy/brillio-team.git master
+git checkout master
+git merge remotes/orignin/master
+===================================================
+
+every time we have to do 
+
+git fetch origin master ---to be updated
+
+
+to remove a file
+---------------------
+vi f11.txt
+$ git clean -f -d f11.txt
+Removing f11.txt
+
+staging to WD
+===================
+$ git add f111.txt
+$ git reset f111.txt --it will move from staging to WD
+
+revert commit in repo
+========================
+git revert <checksum>
+
+
+to check the diff b/w to commits
+git diff <checksum> <checksum>
+
+git log --oneline -n 3 -- to get the short the log of 3 steps
+
+52.66.16.5
+
+http://52.66.16.5:7990
+amdin
+jayaram@123
+
+http://52.66.16.5:7990/projects/DEV/repos/dev/browse
+
+
+git clone http://admin@52.66.16.5:7990/scm/dev/dev.git --to get file structer as repor
+git fetch origin master --- to get the repo
+git checkout master --to move to master dir
+git merge remotes/orignin/master -- to merge master contents with remote repo
+
+--allow-unrelated-histories  # to merge
+
+git pull https://github.com/scmgalaxy/brillio-team.git master --allow-unrelated-histories  --to get others code
+
+git push https://github.com/scmgalaxy/brillio-team.git master --push your code 
+
+
+bitbucket ---
+===============================
+- it is free for 5 user; if we need for more users we need pay
+- we host it on linux machine(or AWS)
+
+user: ec2-user
+installation:
+sudo -s  ---to get to root
+-yum install wget
+-install JDK
+-download bitbucket zip file (wget <url to download>)
+-./<bitbucket.zip> --to install
+-yum install git
+
+we need to start/stop bitbucket ---in google search for how to start/stop bitbucket in linux
+
+
+to access bitbucket
+------------------------
+http://52.66.16.5:7990 --- to access bitbuket
+
+**perform normal "push" operation we will get to see the repo on remote server
+
+
+https://github.com/
+madhanraju.j2@gmail.com	
+jayaram@123
+
+github ------
+============================
+-- we have to pay after free trial - 7$ per month
+
+on windows pc we have to use "Git Bash" -- it is same as linux console which supports most of the linux command
+
+to Collaborate with others -- we need to go to 
+-Settings->Collaborators->and search with username "madhanrajuj2" ; and add "Add collaboration"
+
+user: ec2-user
+
+
+SourceTree
+==========
+gui tool for GIT hub operation
+
+SOME LINUX COMMANDS
+=======================
+pwd - Current directory
+
+
+52.66.31.67
+
+madhan.assembla.com
+
+
+https://subversion.assembla.com/svn/madhan^madhan-first-space/
+sudo yum update
+yum install svn
+svn --version
+
+UN: madhanraju.j2789757
+PW: jaya@123
+
+on AWS:
+sudo yum update
+yum install svn
+svn co <URL> url from assambla home page
+
+35.154.237.220
+svn checkout url
+svn info
+svn add
+svn commit -m"comment"
+svn status
+
+svn cat
+svn mkdir
+svn log
+
+svn move
+svn copy
+svn delete
+
+svn diff
+
+svn diff committers
+svn diff -c 9115 committers
+svn log
+svn info
+svn list
+svn update
+
+svn diff https://subversion.assembla.com/svn/madhan^madhan-first-space/trunk
+
+import
+================
+to put data to server from local repo
+=========================================
+svn import myproject /path/to/repo \
+ -m "Importing my project"
+
+svn import myproject https://subversion.assembla.com/svn/madhan^madhan-first-space/trunk/myproject -m "importing my project"
+
+myproject --- which is a dir in my local repo
+https://subversion.assembla.com/svn/madhan^madhan-first-space/trunk/myproject --- path where i am creating a dir in assembla
+***we can create a "myproject" under trunk
+
+adding myproject/page.php
+addimg myproject/syle.css
+adding myproject/includes
+
+export --- to download specific folder from expecific folder
+===============================================================
+svn export https://subversion.assembla.com/svn/madhan^madhan-first-space/trunk
+
+
+
+SVN setup on windows:
+--------------------------
+Apache Subversion binary packages
+
+https://www.visualsvn.com/downloads/
+install -- VisualSVN Server
+
+BackUP: C:\Users\Public\Documents\VisualSVN Server\Backup\
+Repositories: C:\Repositories\
+
+Git hub login:
+UN: madhanraju.j2@gmail.com
+UN:madhnarajuj2
+PW: jayaram@123
+      
