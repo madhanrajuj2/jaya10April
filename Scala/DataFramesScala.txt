@@ -1,0 +1,590 @@
+import org.apache.spark.SparkContext, org.apache.spark.SparkConf
+import org.apache.spark.sql.SQLContext
+
+var orderRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+
+var sqlContext = new SQLContext(sc)
+
+case class Orders( 
+var order_id: Int,
+var order_date: String,
+var order_customer_id: Int,
+var order_status: String)
+
+//converting to dataframe
+
+var ordersDF = orderRDD.map(
+rec=> {
+var y = rec.split(",")
+Orders(y(0).toInt,y(1),y(2).toInt,y(3))
+}).toDF()
+
+
+
+ordersDF.printSchema()
+ordersDF.show()
+ordersDF.registerTempTable("orders2")
+
+val r = sqlContext.sql("select * from orders2 limit 10")
+var res1 = sqlContext.sql("select order_status, count(*) as order_status_count from orders2 group by order_status")
+
+res.show()
+
+spark-shell --master local --conf "spark.ui.port=2569"
+
+
+val SqlContext = new SQLContext(sc)
+----------------------------------------------------------
+
+import org.apache.spark.sql.SQLContext
+import SqlContext.implicits._
+
+case class Orders( 
+var order_id: Int,
+var order_date: String,
+var order_customer_id: Int,
+var order_status: String);
+
+var orderRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+
+var ordersDF = orderRDD.map(
+rec=> {
+var y = rec.split(",")
+Orders(y(0).toInt,y(1),y(2).toInt,y(3))
+}).toDF()
+
+
+
+ordersDF.registerTempTable("orders2")
+
+val r = sqlContext.sql("select * from orders2 limit 10")
+
+res1.take(10).foreach(println)
+
+-------------------------------------------------------
+spark-shell --master yarn --conf "spark.ui.port=12534"
+spark-shell --conf "spark.ui.port=12534" --packages com.databricks:spark-avro_2.10:2.0.1
+by default spark-shell will launch in yarn mode
+-------------------------------------------------------
+
+finding revenu per day and no. of orders per day.
+
+import org.apache.spark.sql.SQLContext
+import sqlContext.implicits._
+
+var orderRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+var order_itemsRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/order_items")
+
+case class Orders(
+order_id: Int,
+order_date: String,
+order_cust_id: Int,
+order_status: String);
+
+case class Order_items(
+order_item_id: Int,
+order_item_order_id: Int,
+order_item_product_id: Int,
+order_item_quantity: Int,
+order_item_subtotal: Double,
+order_item_product_price: Double);
+
+
+var ordersDF = orderRDD.map(
+x=> {
+var y = x.split(",")
+Orders(y(0).toInt,y(1),y(2).toInt,y(3))
+}).toDF()
+
+var order_itemsDF = order_itemsRDD.map(
+x=> {
+var y = x.split(",")
+Order_items(y(0).toInt,y(1).toInt,y(2).toInt,y(3).toInt,y(4).toFloat,y(5).toFloat)
+}).toDF()
+
+ordersDF.registerTempTable("orders3")
+order_itemsDF.registerTempTable("order_items3")
+
+var res = sqlContext.sql("select o.order_date, sum(oi.order_item_subtotal), count(distinct order_id) from orders3 o join order_items3 oi on o.order_id = oi.order_item_id group by o.order_date order by o.order_date")
+
+sqlContext.setConf("spark.sql.shuffle.partitions","10")
+
+res.collect().foreach(println)
+
+------------------------------------------------------------
+File Format:
+http://arun-teaches-u-tech.blogspot.in/p/file-formats.html
+
+file format code:
+------------------------------
+https://gist.github.com/niteshchainani/80a079a5eeb2b38c205a4c3915cf5708
+https://gist.github.com/niteshchainani/80a079a5eeb2b38c205a4c3915cf5708
+
+to understand the performance of the file format
+--------------------------------------------------
+https://blog.cloudera.com/blog/2017/02/performance-comparing-of-different-file-formats-and-storage-engines-in-hadoop-file-system/
+
+
+
+hadoop fs -mkdir /user/madhanrajuj2/resultscala
+
+
+avro
+------
+//Writing to disk
+ordersDF.write.format("com.databricks.spark.avro").save("/user/madhanrajuj2/resultscal/ordersAvro5")
+
+//reading from disk
+var df1 = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/resultscal/ordersAvro")
+
+df1.show()
+
+df1.registerTempTable("orderavro")
+df1.printSchema()
+
+import sqlContext.implicits._
+
+var result = sqlContext.sql("select * from orderavro where order_status = 'CLOSED' or order_status = 'closed'")
+
+
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/ordersAvro5
+
+Avro -compressed into "snappy"
+--------------------------------
+sqlContext.setConf("spark.sql.avro.compression.codec","snappy")
+ordersDF.write.format("com.databricks.spark.avro").mode("overwrite").save("/user/madhanrajuj2/resultscal/ordersAvroSnappy1")
+
+GzipCodec --not supported X
+--------------------------
+sqlContext.setConf("spark.sql.avro.compression.codec","GzipCodec")
+ordersDF.write.format("com.databricks.spark.avro").mode("overwrite").save("/user/madhanrajuj2/resultscal/ordersAvro4")
+
+ordersDF.write.format("com.databricks.spark.avro").mode("overwrite").save("/user/madhanrajuj2/resultscal/ordersAvro4")
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/ordersAvroSnappy1
+
+
+
+Avro - Reading
+-------------------
+var df = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/resultscal/ordersAvroSnappy")
+
+var res = df.map(rec=> (rec(0) +","+rec(1) +","+rec(2) +","+rec(3)))
+res.take(10).foreach(println)
+
+res.saveAsTextFile("/user/madhanrajuj2/resultscal/ordersTextCSV")
+
+hadoop fs -rm -R /user/madhanrajuj2/resultscal/ordersText
+
+
+import com.databricks.spark.avro._; //on Cloudera
+
+
+orc
+===================
+
+var orderRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+
+case class Orders(
+order_id: Int,
+order_date: String,
+order_cust_id: Int,
+order_status: String);
+
+var df = orderRDD.map(
+rec=> {
+var y = rec.split(",")
+Orders(y(0).toInt,y(1),y(2).toInt,y(3))
+}).toDF()
+
+ORC write
+-------------------------
+df.write.orc("/user/madhanrajuj2/resultscal/ordersOrc")
+
+ORC read
+-------------------------
+var orderDF = sqlContext.read.orc("/user/madhanrajuj2/resultscal/ordersOrc")
+
+ORC write with compression: SNAPPY
+---------------------------
+sqlContext.setConf("spark.sql.orc.compression.codec","snappy")
+df.write.orc("/user/madhanrajuj2/resultscal/ordersOrcSnappy")
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/ordersOrcSnappy
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/ordersOrc
+
+
+
+
+PARQUET write
+-------------------
+
+import sqlContext.implicits._
+
+var orderRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+
+case class Orders(
+order_id: Int,
+order_date: String,
+order_cust_id: Int,
+order_status: String)
+
+var df = orderRDD.map(
+rec => {
+var y = rec.split(",")
+Orders(y(0).toInt,y(1),y(2).toInt,y(3))
+}).toDF()
+
+
+df.write.parquet("/user/madhanrajuj2/resultscal/ordersparquet")
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/ordersparquet
+
+parquet Read
+----------------
+var df1 = sqlContext.read.parquet("/user/madhanrajuj2/resultscal/ordersparquet")
+
+df1.show()
+
+
+parquet - write with compression
+--------------------------------
+sqlContext.setConf("spark.sql.parquet.compression.codec","snappy")
+
+df.write.parquet("/user/madhanrajuj2/resultscal/ordersparquetSnappy")
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/ordersparquetSnappy
+
+
+Json:
+--------------
+vi departments.json
+
+{"department_id":2, "department_name":"Fitness"}
+{"department_id":3, "department_name":"Footwear"}
+{"department_id":4, "department_name":"Apparel"}
+{"department_id":5, "department_name":"Golf"}
+{"department_id":6, "department_name":"Outdoors"}
+{"department_id":7, "department_name":"Fan Shop"}
+{"department_id":8, "department_name":"TESTING"}
+{"department_id":8000, "department_name":"TESTING"}
+
+import org.apache.spark.SparkContext, org.apache.spark.sql.SQLContext
+
+reading a json file
+-------------------------------
+var df = sqlContext.read.json("file:///home/madhanrajuj2/departments.json")
+
+df.show()
+df.printSchema()
+df.select("department_id").show()
+df.select("department_id","department_name").show()
+df.select($"department_id" + 1,$"department_name").show()
+
+df.filter($"department_id" > 5).show()
+df.filter($"department_id" === 6 || $"department_id" === 7).show()
+
+df.groupBy("department_id").count().show()
+
+
+df.registerTempTable("departments")
+
+var result = sqlContext.sql("select * from departments")
+
+result.collect().foreach(println)
+
+json save
+---------------------
+resultdf.toJSON.saveAsTextFile("/user/madhanrajuj2/resultscal/deparmtmentsJson")
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/deparmtmentsJson
+
+hadoop fs -cat /user/madhanrajuj2/resultscal/deparmtmentsJson/par*
+
+
+Json save with compression
+--------------------------------
+
+sqlContext.setConf("spark.sql.json.compression.codec","Gzip2Codec")
+result.write.json("/user/madhanrajuj2/resultscal/deparmtmentsJson3")
+
+
+result.write.format("json").option("codec","org.apache.hadoop.io.compress.GzipCodec").save("/user/madhanrajuj2/resultscal/deparmtmentsJson2")
+
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/deparmtmentsJson2
+
+hadoop fs -cat /user/madhanrajuj2/resultscal/deparmtmentsJson2/par*
+
+
+save textFile compressed
+--------------------------------
+var orderRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
+orderRDD.saveAsTextFile("/user/madhanrajuj2/resultscal/orderRDDText1")
+
+Textfile in compressed for - RDD compressed
+----------------------------------------------
+import org.apache.hadoop.io.compress._
+orderRDD.saveAsTextFile("/user/madhanrajuj2/resultscal/orderRDDText",classOf[GzipCodec])
+
+
+
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/orderRDDText
+
+hadoop fs -ls /user/madhanrajuj2/resultscal/orderRDDText1
+
+
+JDBC connectivity
+----------------------
+spark-shell --conf "spark.ui.port=12356"
+
+info to understand working concept
+----------------------------------
+http://bigdatums.net/2016/10/16/writing-to-a-database-from-spark/
+
+reading
+------------
+var jdbcurl1 = "jdbc:mysql://nn01.itversity.com/retail_db
+val prop = new java.util.Properties
+prop.setProperty("driver","com.mysql.jdbc.Driver")
+prop.setProperty("user","retail_dba")
+prop.setProperty("password","itversity")
+
+val table = "orders"
+
+var df = sqlContext.read.jdbc(jdbcurl1,table,prop)
+
+df.registerTempTable("ordersres")
+
+var result2= sqlContext.sql("select * from orders where order_status = 'CLOSED'") 
+
+result2.show()
+res.printSchema()
+
+--------------------------------------------------------
+writing to DB
+--------------
+var jdbcurl1 = "jdbc:mysql://nn01.itversity.com/retail_export
+val prop = new java.util.Properties
+prop.setProperty("driver","com.mysql.jdbc.Driver")
+prop.setProperty("user","retail_dba")
+prop.setProperty("password","itversity")
+
+val table = "order_closed"
+df.write.mode("append").jdbc(jdbcurl1,table,prop)
+-------------------------------------------------------
+
+
+Hive
+========
+reading Hive table orders and order_items from DB madhan
+-----------------------------------------------------------
+import org.apache.spark.sql.hive.HiveContext
+sqlContext.setConf("spark.sql.shuffle.partitions","2")
+val hiveContext = new HiveContext(sc)
+var result = hiveContext.sql("select * from madhan.orders o where o.order_status = 'CLOSED'")
+
+var resDF = sqlContext.sql("select substr(o.order_date,1,10), round(sum(oi.order_item_subtotal),2) as revenu , count(distinct o.order_id) as order_count from madhan.orders o join madhan.order_items oi on oi.order_item_order_id = o.order_id group by o.order_date order by o.order_date")
+
+//writing the result to hive db madhan.TableResult
+resDF.write.mode("Overwrite").saveAsTable("madhan.TableResult");
+
+
+
+res.show()
+
+-------------------------------------------------------
+writing to Hive table
+-------------------------
+import org.apache.spark.sql.hive.HiveContext;
+ 
+HiveContext sqlContext = new org.apache.spark.sql.hive.HiveContext(sc.sc());
+ 
+resDF.write.mode("Overwrite").saveAsTable("madhan.xyz1");
+
+
+===========================================
+hive info extra:
+So if it seems a cache issue then try refreshing the table metadata.
+sqlContext.refreshTable("my_table")
+
+
+if hive warehouse dir is different
+--------------------------------
+hiveContext.setConf("hive.metastore.warehouse.dir", params.hiveHost + "user/hive/warehouse")
+==============================================
+
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+ 
+//create sqlContext
+val conf = new SparkConf()
+val sc = new SparkContext(conf)
+val sqlContext = new SQLContext(sc)
+ 
+//read json into DataFrame
+val df = sqlContext.read.json("bdPerson_v1_1k.json")
+ 
+//filter columns in DataFrame
+val dfSmall = json.select("first_name", "last_name")
+ 
+//write DataFrame as JSON into the "names" directory
+toSchemaRDD.write.json("names")
+
+Data frames – writing it in text format
+---------------------------------------------
+
+Dont use repartition() rather use coalesce()
+
+df.coalesce(1).rdd.saveAsTextFile("/path-to-output-file")
+
+Because repartition() will shuffle the data .
+
+coalesce uses existing partitions to minimize the amount of data that's shuffled. repartition creates new partitions and does a full shuffle. coalesce results in partitions with different amounts of data (sometimes partitions that have much different sizes) and repartition results in roughly equal sized partitions.
+
+Save Modes
+-------------------------------
+ordersDF.write.format("com.databricks.spark.avro").mode("overwrite").save("/user/madhanrajuj2/resultscal/ordersAvroSnappy1")
+.mode("overwrite")
+.mode("append")
+.mode("error") --(default)
+.mode("ignore")
+
+SaveMode.ErrorIfExists (default)	"error" (default)	When saving a DataFrame to a data source, if data already exists, an exception is expected to be thrown.
+SaveMode.Append	"append"	When saving a DataFrame to a data source, if data/table already exists, contents of the DataFrame are expected to be appended to existing data.
+SaveMode.Overwrite	"overwrite"	Overwrite mode means that when saving a DataFrame to a data source, if data/table already exists, existing data is expected to be overwritten by the contents of the DataFrame.
+SaveMode.Ignore	"ignore"	Ignore mode means that when saving a DataFrame to a data source, if data already exists, the save operation is expected to not save the contents of the DataFrame and to not change the existing data. This is similar to a CREATE TABLE IF NOT EXISTS in SQL.
+
+
+
+File format handling
+=============================================================
+
+textFile format
+==============================
+==============================
+to read:
+---------------------------
+sc.textFile("/path")
+
+to save:
+---------------------------
+dataRDD.saveAsTextFile("/path")
+
+
+to save in compressed format - GzipCodec
+---------------------------------------------
+data.saveAsTextFile("/path",classOf[GzipCodec])
+
+JSON format:
+======================
+======================
+
+to read:
+---------
+var df = sqlContext.read.json("file:///home/madhanrajuj2/departments.json")
+
+to write:
+----------
+resultdf.toJSON.saveAsTextFile("/user/madhanrajuj2/resultscal/deparmtmentsJson")
+
+to write in compressed format:
+--------------------------------
+sqlContext.setConf("spark.sql.json.compression.codec","Gzip2Codec")
+result.write.json("/user/madhanrajuj2/resultscal/deparmtmentsJson3")
+
+
+Avro format:
+===================
+=====================
+to read: on HDP
+---------------
+//reading from disk
+var df1 = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/resultscal/ordersAvro")
+
+//check how we can work on cloudera for avro - because it have native avro support
+Read on cloudera:
+-------------
+sqlContext.read.avro("/ordersAVRO3")
+
+Save on Cloudera:
+--------------------
+df.write.avro("/path")
+
+to save on cloudera in compressed format:
+---------------------------
+
+Avro -compressed into "snappy"
+--------------------------------
+sqlContext.setConf("spark.sql.avro.compression.codec","snappy")
+ordersDF.write.format("com.databricks.spark.avro").mode("overwrite").save("/path")
+
+Parquet format:
+====================
+====================
+to Read:
+---------
+var df1 = sqlContext.read.parquet("/user/madhanrajuj2/resultscal/ordersparquet")
+
+to save the Parquet file
+------------------------
+df.write.parquet("/user/madhanrajuj2/resultscal/ordersparquet")
+
+to save the parquet file in compressed format:
+-------------------------------------------------
+sqlContext.setConf("spark.sql.parquet.compression.codec","snappy")
+
+df.write.parquet("/user/madhanrajuj2/resultscal/ordersparquetSnappy")
+
+
+to overwrite the existing file - save mode
+----------------------------------------------
+df.write.format("parquet").mode("overwrite").save("/path/to/file")
+
+
+orc format: Optimized Row Columnar(ORC)
+=======================================
+=======================================
+to read:
+-----------
+var orderDF = sqlContext.read.orc("/user/madhanrajuj2/resultscal/ordersOrc")
+
+to write:
+---------------
+df.write.orc("/user/madhanrajuj2/resultscal/ordersOrc")
+
+to write in compressed format:
+---------------------------------
+sqlContext.setConf("spark.sql.orc.compression.codec","snappy")
+df.write.orc("/user/madhanrajuj2/resultscal/ordersOrcSnappy")
+
+to overwrite the existing file - save mode
+----------------------------------------------
+df.write.format("orc").mode("overwrite").save("/path")
+
+
+UDF -- Spark SQL UDFs
+--------------
+
+import org.apache.spark.sql.SQLContext
+var df = sqlContext.read.json("file:///home/madhanrajuj2/departments.json")
+df.registerTempTable("dept")
+
+sqlContext.udf.register("mult", (x:Int) => (x*x))
+sqlContext.udf.register("myUpper", (input: String) => input.toUpperCase)
+
+
+var result = sqlContext.sql("select department_id, myUpper(department_name), mult(department_id) as departmentMultValue from dept")
+
+result.show()
+
+scala UDF:
+-------------------
+// Let's define a UDF to do the filtering
+val isWarsaw = udf { (s: String) => s == "Warsaw" }
+
+
