@@ -1,0 +1,240 @@
+sqoop import \
+--connect "jdbc:mysql://nn01.itversity.com:3306/retail_import" \
+-m 1 \
+--username retail_dba \
+--password itversity \
+--table orders \
+--target-dir /user/madhanrajuj2/problem11/orders1Avro \
+--as-avrodatafile \
+--compress \
+--compression-codec org.apache.hadoop.in.compress.SnappyCodec \
+--outdir java-files
+
+
+sqoop import \
+--connect "jdbc:mysql://nn01.itversity.com:3306/retail_import" \
+-m 1 \
+--username retail_dba \
+--password itversity \
+--table order_items \
+--target-dir /user/madhanrajuj2/problem11/order-itemsAvro \
+--as-avrodatafile \
+--outdir jav-files
+
+sqoop import \
+--connect "jdbc:mysql://nn01.itversity.com:3306/retail_import" \
+-m 1 \
+--username retail_dba \
+--password itversity \
+--table order_items \
+--target-dir /user/madhanrajuj2/problem11/order_itemsAvroSnappy \
+--as-avrodatafile \
+--compress \
+--compression-codec org.apache.hadoop.io.compress.SnappyCodec \
+--outdir java-file
+
+
+hadoop fs -ls /user/madhanrajuj2/problem11/order-itemsAvro
+hadoop fs -ls /user/madhanrajuj2/problem11/order_itemsAvroSnappy
+
+--compress \
+--compression-codec snappy \
+--outdir java-files
+
+
+hadoop fs -ls /user/madhanrajuj2/problem11/orders1
+hadoop fs -ls /user/madhanrajuj2/problem11/orders1Avro
+
+hadoop fs -ls /user/madhanarajuj2/problem11/orders1
+
+
+
+hadoop fs -mkdir /user/madhanrajuj2/problem11
+
+
+sqoop eval \
+--connect "jdbc:mysql://nn01.itversity.com:3306/retail_import" \
+--username retail_dba \
+--password itversity \
+--query "select * from orders limit 10"
+
+sqoop list-databases \
+--connect "jdbc:mysql://nn01.itversity.com:3306" \
+--username retail_dba \
+--password itversity
+
+spark-shell --conf "spark.ui.port=12356" --packages "com.databricks:spark-avro_2.10:2.0.1"
+
+import org.spark.sql.SQLContext, org.spark.sql.hive.HIveContext
+
+case class Orders(
+order_id: Int,
+order_date: String,
+order_cust_id: Int,
+order_status: String)
+
+
+
+spark-shell --conf "spark.ui.port=123456" --packages "com.databricks:spark-avro_2.10:2.0.1"
+
+import org.apache.spark.sql.SQLContext
+import org.apache.hadoop.io.compress._
+
+sqlContext.setConf("spark.sql.shuffle.partitions","10")
+var orderDF = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/problem11/orders1Avro")
+var order_itemsDF = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/problem11/order_itemsAvroSnappy")
+
+//orderDF.printSchema()
+//order_itemsDF.printSchema()
+
+sqlContext.setConf("spark.sql.shuffle.partitions","10")
+orderDF.registerTempTable("orders")
+order_itemsDF.registerTempTable("order_items")
+
+var result = sqlContext.sql("select to_date(from_unixtime(cast(substr(o.order_date,1,10)as int)))as orderdate, o.order_status, count(distinct o.order_id) as order_count, round(sum(oi.order_item_subtotal),2)as Total_sum from orders o join order_items oi on o.order_id = oi.order_item_order_id group by o.order_date, o.order_status order by orderdate desc,o.order_status asc,order_count asc,Total_sum desc")
+
+//result.collect().foreach(println)
+//result.show()
+
+sqlContext.setConf("spark.sql.parquet.compression.codec","gzip")
+result.write.format("parquet").mode("overwrite").save("/user/madhanrajuj2/problem11/result4a-gzip")
+
+hadoop fs -ls /user/madhanrajuj2/problem11/result4a-gzip
+
+hadoop fs -cat /user/madhanrajuj2/problem11/result4a-gzip/par* | head
+
+var df = sqlContext.read.format("com.databricks.spark.avro").load("/user/madhanrajuj2/problem11/result4a-gzip")
+
+var df = sqlContext.read.parquet("/user/madhanrajuj2/problem11/result4a-gzip")
+
+df.show()
+
+sqlContext.setConf("spark.sql.parquet.compression.codec","snappy")
+result.write.format("parquet").mode("overwrite").save("/user/madhanrajuj2/problem11/result4a-snappy")
+
+var resultRDD = result.map(rec=>(rec(0)+","+rec(1)+","+rec(2)+","+rec(3)))
+resultRDD.saveAsTextFile("/user/madhanrajuj2/problem11/result4a-csv")
+
+
+hadoop fs -rm -R /user/madhanrajuj2/problem11/result4a-csv/
+
+hadoop fs -ls /user/madhanrajuj2/problem11/result4a-snappy
+
+hadoop fs -ls /user/madhanrajuj2/problem11/result4a-gzip
+
+hadoop fs -cat /user/madhanrajuj2/problem11/result4a-csv/par* | head -n 20
+
+hadoop fs -cat /user/madhanrajuj2/problem11/result4a-csv/par*| head
+
+mysql -u retail_dba -h nn01.itversity.com -p
+itversity
+
+create table result9
+(order_date varchar(10),
+order_status varchar(15),
+order_count int,
+order_subtotal decimal)
+
+sqoop export \
+--connect "jdbc:mysql://nn01.itversity.com/retail_export" \
+--username retail_dba \
+--password itversity \
+--table result9 \
+--export-dir /user/madhanrajuj2/problem11/result4a-csv \
+--input-fields-terminated-by "," \
+--input-lines-terminated-by "\n" \
+--outdir java-files
+
+select * from result9 limit 10;
+
+
+[2013-07-26,CANCELED,2,1329.85]
+[2013-07-26,CLOSED,27,12547.35]
+[2013-07-26,COMPLETE,72,42165.88]
+[2013-07-26,ON_HOLD,17,9149.88]
+[2013-07-26,PAYMENT_REVIEW,5,2855.59]
+[2013-07-26,PENDING,30,19741.87]
+[2013-07-26,PENDING_PAYMENT,51,31152.51]
+[2013-07-26,PROCESSING,25,15323.46]
+[2013-07-26,SUSPECTED_FRAUD,4,2253.78]
+[2013-07-25,CANCELED,1,429.97]
+[2013-07-25,CLOSED,18,11716.91]
+[2013-07-25,COMPLETE,33,20030.32]
+[2013-07-25,ON_HOLD,4,1899.84]
+[2013-07-25,PAYMENT_REVIEW,2,1419.74]
+[2013-07-25,PENDING,10,4887.46]
+[2013-07-25,PENDING_PAYMENT,31,17014.02]
+[2013-07-25,PROCESSING,15,10285.64]
+[2013-07-25,SUSPECTED_FRAUD,2,669.93]
+
+
+sqoop import \
+--connect "jdbc:mysql://nn01.itversity.com:3306/retail_db" \
+--username retail_dba \
+--password itversity \
+--table products \
+--target-dir /user/madhanrajuj2/problem22/products \
+--fields-terminated-by "|" \
+--outdir java-files
+
+hadoop fs -cat /user/madhanrajuj2/problem22/products/par* | head
+
+product_id
+product_category_id
+product_name
+product_description
+product_price
+product_image
+
+import sqlContext.implicits._
+
+var prodRDD = sc.textFile("/user/madhanrajuj2/problem22/products")
+
+case class Prod(
+product_id: Int,
+product_category_id: Int,
+product_name: String,
+product_description: String,
+product_price: Float,
+product_image: String)
+
+var prodDF = prodRDD.map(
+rec=>{
+var y = rec.split('|')
+Prod(y(0).toInt,y(1).toInt,y(2),y(3),y(4).toFloat,y(5))
+}).toDF()
+
+//prodDF.show()
+
+var res1 = prodDF.filter($"product_price"< 100)
+//res1.show()
+
+prodDF.registerTempTable("prod")
+
+
+var res = sqlContext.sql("select product_category_id,max(product_price) as max_priced,count(product_id) as total_prod, cast(avg(product_price)as decimal(10,2)) as average_price,min(product_price) as minimun_price from prod p where p.product_price < 100 group by product_category_id")
+
+//prod.printSchema()
+//res.show()
+
+//var res2 = sqlContext.sql("select product_id,product_category_id,product_name, max(product_price) as max_priced_prod from prodgret100")
+//res2.show()
+
+
+var res = sqlContext.sql("create view maxprice select product_id,product_category_id, max(product_price) from prodgret100 group by product_id,product_category_id")
+
+var res = sqlContext.sql("select product_id, product_category_id,max(product_price) from ")
+
+res.show()
+
+sqlContext.sql("create view maxprice as select max(a.product_price) as max_priced_prod from prodgret100 a")
+var res3 = sqlContext.sql("select product_id, product_category_id, product_name, product_price from prodgret100 where product_price = maxprice")
+
+spark-shell --conf "spark.ui.port=12358" --packages "com.databricks:spark-avro_2.10:2.0.1"
+
+)
+
+sqlContext.sql("select product_id, product_category_id")
+
+
+hadoop fs -mkdir /user/madhanrajuj2/problem22
