@@ -470,6 +470,9 @@ sqlContext.sql("insert into table madhan.emp_part partition(loc) select id,name,
 
 hadoop fs -ls /apps/hive/warehouse/madhan.db/emp_part
 
+*********************
+note: "insert overwrite" - overwrite command is overwriting if data is same
+
 ----------------------------------------
 create table madhan.emp_part
 (id int,
