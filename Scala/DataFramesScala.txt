@@ -3,7 +3,7 @@ import org.apache.spark.sql.SQLContext
 
 var orderRDD = sc.textFile("/user/madhanrajuj2/sqoop_import/orders")
 
-var sqlContext = new SQLContext(sc)
+//var sqlContext = new SQLContext(sc)
 
 case class Orders( 
 var order_id: Int,
@@ -31,6 +31,8 @@ var res1 = sqlContext.sql("select order_status, count(*) as order_status_count f
 res.show()
 
 spark-shell --master local --conf "spark.ui.port=2569"
+
+spark-shell --conf "spark.ui.port=23564" --packages "com.databricks:spark-avro_2.10:2.0.1"
 
 
 val SqlContext = new SQLContext(sc)
@@ -311,7 +313,7 @@ sqlContext.setConf("spark.sql.json.compression.codec","Gzip2Codec")
 result.write.json("/user/madhanrajuj2/resultscal/deparmtmentsJson3")
 
 
-result.write.format("json").option("codec","org.apache.hadoop.io.compress.GzipCodec").save("/user/madhanrajuj2/resultscal/deparmtmentsJson2")
+resultDF.write.format("json").option("codec","org.apache.hadoop.io.compress.GzipCodec").save("/user/madhanrajuj2/resultscal/deparmtmentsJson2")
 
 
 hadoop fs -ls /user/madhanrajuj2/resultscal/deparmtmentsJson2
@@ -375,6 +377,9 @@ prop.setProperty("password","itversity")
 
 val table = "order_closed"
 df.write.mode("append").jdbc(jdbcurl1,table,prop)
+
+
+//if table is not present it will created one and updates df data in to table
 -------------------------------------------------------
 
 
@@ -389,10 +394,10 @@ var result = hiveContext.sql("select * from madhan.orders o where o.order_status
 
 var resDF = sqlContext.sql("select substr(o.order_date,1,10), round(sum(oi.order_item_subtotal),2) as revenu , count(distinct o.order_id) as order_count from madhan.orders o join madhan.order_items oi on oi.order_item_order_id = o.order_id group by o.order_date order by o.order_date")
 
-//writing the result to hive db madhan.TableResult
-resDF.write.mode("Overwrite").saveAsTable("madhan.TableResult");
+//writing the result to hive db madhan.ResultTable
+resDF.write.mode("overwrite").saveAsTable("madhan.ResultTable");
 
-
+//if table is not present it will create one and write the result
 
 res.show()
 
@@ -467,6 +472,7 @@ File format handling
 textFile format
 ==============================
 ==============================
+import org.apache.hadoop.io.compress._
 to read:
 ---------------------------
 sc.textFile("/path")

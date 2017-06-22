@@ -212,7 +212,17 @@ var res1 = prodDF.filter($"product_price"< 100)
 prodDF.registerTempTable("prod")
 
 
-var res = sqlContext.sql("select product_category_id,max(product_price) as max_priced,count(product_id) as total_prod, cast(avg(product_price)as decimal(10,2)) as average_price,min(product_price) as minimun_price from prod p where p.product_price < 100 group by product_category_id")
+var res = sqlContext.sql("select product_category_id,max(product_price) as max_priced,count(product_id) as total_prod, cast(avg(product_price)as decimal(10,2)) as average_price,min(product_price) as minimun_price from prod p where p.product_price < 100 group by product_category_id order by product_category_id desc")
+
+res.show()
+res.collect().foreach(println)
+
+sqlContext.setConf("spark.sql.avro.compression.codec","snappy")
+res.write.format("com.databricks.spark.avro").mode("overwrite").save("/user/madhanrajuj2/problem22/result-sql")
+
+sqlContext.setConf("spark.sql.shuffle.partitions","10")
+
+hadoop fs -ls /user/madhanrajuj2/problem22/result-sql/
 
 //prod.printSchema()
 //res.show()
@@ -238,3 +248,269 @@ sqlContext.sql("select product_id, product_category_id")
 
 
 hadoop fs -mkdir /user/madhanrajuj2/problem22
+
+(58,241.0,170.0,4,115.0)
+(57,189.99,154.99,6,109.99)
+(56,159.99,159.99,2,159.99)
+(54,299.99,209.99,6,129.99)
+
+product_category_id|max_priced|total_prod|average_price|minimun_price|
++-------------------+----------+----------+-------------+-------------+
+|                 59|      70.0|        10|        38.60|         28.0|
+|                 58|      60.0|        13|        43.69|         22.0|
+|                 57|     99.99|        18|        59.16|          0.0|
+|                 56|      90.0|        22|        60.50|         9.99|
+|                 55|      85.0|        24|        31.50|         9.99
+
+
+Problem 3:
+---------------
+create database retail_stage5
+dfs -ls /apps/hive/warehouse/
+dfs -ls /
+hadoop fs -ls
+
+sqoop import-all-tables \
+-m 1 \
+--connect "jdbc:mysql://nn01.itversity.com/retail_import" \
+--username retail_dba \
+--password itversity \
+--as-avrodatafile \
+--compress \
+--compression-codec snappy \
+--warehouse-dir /apps/hive/warehouse/retail_stage5.db \
+--outdir java-file
+
+hadoop fs -ls /apps/hive/warehouse/retail_stage5.db/orders
+hadoop fs -get /apps/hive/warehouse/retail_stage5.db/orders/part-m-00000.avro /home/madhanrajuj2/avrofile/
+
+hadoop fs -mkdir /home/madhanrajuj2/avrofile/avroschema
+
+ls -l /home/madhanrajuj2/avrofile/
+
+hadoop fs 
+
+hadoop fs -mkdir 
+
+avro-tools getschema /home/madhanrajuj2/avrofile/part-m-00000.avro > /home/madhanrajuj2/avrofile/avroschema/order.avsc
+
+hadoop fs -mkdir /user/madhanrajuj2/avroschema
+hadoop fs -put /home/madhanrajuj2/avrofile/avroschema/order.avsc /user/madhanrajuj2/avroschema
+
+cat /home/madhanrajuj2/avrofile/avroschema/order.avsc
+
+create external table madhan.orders_sqoop1
+stored as avro
+location '/apps/hive/warehouse/retail_stage5.db/orders'
+tblproperties('avro.schema.url'='/user/madhanrajuj2/avroschema/order.avsc')
+
+spark-shell --conf "spark.ui.port=12546" --packages "com.databricks:spark-avro_2.10:2.0.1"
+
+import org.apache.spark.sql.hive.HiveContext
+
+sqlContext.setConf("spark.sql.shuffle.partitions","10")
+var hiveContext = new HiveContext(sc)
+var res = hiveContext.sql("select to_date(substr(from_unixtime(cast(substr(o.order_date,1,10) as int)),1,10)) as order_date, count(o.order_id) as order_count from madhan.orders_sqoop1 o group by o.order_date order by order_count desc limit 1")
+
+var res = hiveContext.sql("select to_date(substr(from_unixtime(cast(substr(o.order_date,1,10) as int)),1,10)) as order_date, count(o.order_id) as order_count from madhan.orders_sqoop1 o group by to_date(substr(from_unixtime(cast(substr(o.order_date,1,10) as int)),1,10)) order by order_count desc limit 1")
+res.show()
+res.collect().foreach(println)
+
++----------+-----------+
+|      date|order_count|
++----------+-----------+
+|2013-11-03|        347|
++----------+-----------+
+
+var res = hiveContext.sql("select * from madhan.orders_sqoop1 a where substr(from_unixtime(cast(substr(a.order_date,1,10) as int)),1,10) in (select substr(from_unixtime(cast(substr(o.order_date,1,10) as int)),1,10) as order_date, count(o.order_id) as order_count from madhan.orders_sqoop1 o group by o.order_date order by order_count desc limit 1)")
+res.show()
+
+var res1 = res.filter(max(order_count))
+res1.show()
+
+
+var result = hiveContext.sql("select order_date, max(order_count) from (select substr(from_unixtime(cast(substr(o.order_date,1,10) as int)),1,10) as order_date, count(o.order_id) as order_count from madhan.orders_sqoop1 o group by o.order_date order by 2)b group by order_date")
+result.show()
+cat /home/madhanrajuj2/avrofile/avroschema/order.avsc
+
+order_id                int                                         
+order_date              bigint                                      
+order_customer_id       int                                         
+order_status            string  
+
+create table madhan.orders_avro7(
+order_id int,
+order_date string,
+order_customer_id int,
+order_status string)
+partitioned by (order_month string)
+stored as avro;
+
+
+create table madhan.orders_avro8(
+order_id int,
+order_date string,
+order_customer_id int,
+order_status string)
+partitioned by (order_month string)
+stored as avro;
+
+import org.apache.spark.sql.hive.HiveContext
+val hiveContext = new HiveContext(sc)
+
+hiveContext.sql("set hive.exec.dynamic.partition.mode=nonstrict")
+hiveContext.sql("insert overwrite table madhan.orders_avro8 partition(order_month) select order_id, to_date(from_unixtime(case(substr(order_date,1,10)as int))),order_customer_id, order_status, substr(from_unixtime(case(substr(order_date,1,10)as int)),1,7)as order_month from madhan.orders_sqoop1")
+
+select * from orders_avro8 limit 10;
+
+insert into madhan.orders_avro5 as select * from madhan.orders_sqoop1
+
+insert overwrite table orders_avro6 partition (order_month)
+select order_id, to_date(from_unixtime(cast(substr(order_date,1,10)as int))),order_customer_id,order_status,substr(from_unixtime(cast(substr(order_date,1,10)as int)),1,7)as order_month from madhan.orders_sqoop1
+----------------------------------------------
+
+hiveContext.sql("set hive.exec.dynamic.partition.mode=nonstrict")
+hiveContext.sql("insert overwrite table madhan.orders_avro6 partition (order_month) select order_id, to_date(from_unixtime(cast(substr(order_date,1,10)as int))),order_customer_id,order_status,substr(from_unixtime(cast(substr(order_date,1,10)as int)),1,7)as order_month from madhan.orders_sqoop1")
+
+---------------------------------------------------
+
+dfs -ls /apps/hive/warehouse/madhan.db
+hadoop fs -cat /apps/hive/warehouse/madhan.db/orders_avro6/order_month=2013-07/part-00000 | head
+
+sqlContext.setConf("spark.sql.shuffle.partitions","10")
+var hiveContext = new HiveContext(sc)
+var res = hiveContext.sql("select o.order_date as order_date, count(o.order_id) as order_count from madhan.orders_avro6 o group by o.order_date order by order_count desc limit 1")
+res.show()
+res.collect().foreach(println)
+
++----------+-----------+
+|order_date|order_count|
++----------+-----------+
+|2013-11-03|        347|
++----------+-----------+
+
+
+own assignment:
+
+import org.apache.spark.sql.hive.HiveContext
+hiveContext.setConf("spark.sql.shuffle.partitions","10")
+val hiveContext = new HiveContext(sc)
+var resultDF = hiveContext.sql("select o.order_id, substr(from_unixtime(cast(substr(o.order_date,1,10)as int)),1,10) as order_date,o.order_customer_id, o.order_status from madhan.orders_sqoop1 o")
+resultDF.write.mode("overwrite").saveAsTable("madhan.orders_sparkSave1")
+
+
+
+select * from orders_sparkSave1 limit 10;
+
+import org.apache.spark.sql.hive.HiveContext
+val hiveContext = new HiveContext(sc)
+var resultDF = hiveContext.sql("select to_date(from_unixtime(cast(substr(order_date,1,10)as int))) as order_date, order_status from madhan.orders_sqoop1 where order_status = 'CLOSED'")
+resultDF.write.mode("overwrite").saveAsTable("madhan.order_sparkSaved")
+
+var resultDF = hiveContext.sql("select count(1) from madhan.order_sparkSaved")
+resultDF.show()
+
+
+select * from madhan.order_sparkSaved; limit 10;
+select count(1) from madhan.order_sparkSaved;
+
+truncate table madhan.order_sparkSaved;
+
+
+
+=============================================
+
+
+How to load spark dataframe into a hive partition?
+--===================================================
+
+
+-------------------------
+data: EMP
+
+| id| name|salary| dept|
+-----------------------------
+| 1| Mark| 1000| HR|
+| 2| Peter| 1200|SALES|
+| 3| Henry| 1500| HR|
+| 4| Adam| 2000| IT|
+| 5| Steve| 2500| IT|
+| 6| Brian| 2700| IT|
+| 7|Michael| 3000| HR|
+| 8| Steve| 10000|SALES|
+| 9| Peter| 7000| HR|
+| 10| Dan| 6000| BS|
+
+
+import org.apache.spark.sql.SQLContext
+import sqlContext.implicits._
+
+case class emp(
+id: Int,
+name: String,
+salary: Float,
+dept: String)
+
+val empRDD = sc.textFile("file:///home/madhanrajuj2/empdata.txt")
+
+val empDF = empRDD.map(
+rec=>{
+var y = rec.split('|')
+emp(y(0).toInt,y(1).toString,y(2).toFloat,y(3))
+}).toDF()
+
+empDF.registerTempTable("emp1")
+
+
+sqlContext.sql("insert overwrite table madhan.emp_part partition(loc='bang') select id,name,salary,dept,'bang'as loc from emp1")
+
+sqlContext.sql("set hive.exec.dynamic.partition.mode=nonstrict")
+sqlContext.sql("insert into table madhan.emp_part partition(loc) select id,name,salary,dept,'Hyd'as loc from emp1")
+
+
+hadoop fs -ls /apps/hive/warehouse/madhan.db/emp_part
+
+----------------------------------------
+create table madhan.emp_part
+(id int,
+name string,
+sal float,
+dept string)
+partitioned by (loc string)
+row format delimited
+fields terminated by ','
+lines terminated by '\n'
+stored as parquet;
+
+
+insert overwrite table madhan.emp partition(loc='bang')
+select id,name,salary,dept,'bang'as loc from emp1
+---------------------------------------------
+
+val res = sqlContext.sql("select * from emp")
+
+
+select * form emp_part
+
+hadoop fs -ls /apps/hive/warehouse/madhan.db/emp_part
+
+res.show()
+
+empDF.show()
+empDF.printSchema()
+
+
+val res = empRDD.map(x=> x.split('|')(1))
+res.take(5).foreach(println)
+
+create table madhan.emp_part
+(id int,
+name string,
+sal float,
+dept string)
+partitioned by (loc string)
+row format delimited
+fields terminated by ','
+lines terminated by '\n'
+stored as parquet;
+
