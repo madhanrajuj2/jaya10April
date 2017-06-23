@@ -468,6 +468,24 @@ sqlContext.sql("set hive.exec.dynamic.partition.mode=nonstrict")
 sqlContext.sql("insert into table madhan.emp_part partition(loc) select id,name,salary,dept,'Hyd'as loc from emp1")
 
 
+---------------------------
+not working
+---------------------
+empDF.write.format("parquet").options("/apps/hive/warehouse/madhan.db/emp_part/loc=Bang").save()
+
+empDF.
+  write.
+  mode(saveMode.Overwrite).
+  format("parquet").
+  options("/user/hive/warehouse/emptab/location=England").
+  save()
+------------------------------
+
+using dataframes
+--------------------
+
+
+
 hadoop fs -ls /apps/hive/warehouse/madhan.db/emp_part
 
 *********************
@@ -516,4 +534,63 @@ row format delimited
 fields terminated by ','
 lines terminated by '\n'
 stored as parquet;
+
+
+
+----------------------------------
+
+Im trying to load a dataframe into Hive table which is partitioned as below.
+
+create table emptab(id int, name String, salary int, dept String)
+partitioned by (location String)
+row format delimited
+fields terminated by ','
+stored as parquet;
+I have a dataframe created in the below format
+
+val empfile = sc.textFile("emp")
+val empdata = empfile.map(e => e.split(","))
+case class employee(id:Int, name:String, salary:Int, dept:String)
+val empRDD = empdata.map(e => employee(e(0).toInt, e(1), e(2).toint, e(3)))
+val empDF = empRDD.toDF()
+empDF.write.partitionBy("location").insertInto("/user/hive/warehouse/emptab/location=England")
+
+But Im getting an error as below:
+empDF.write.partitionBy("location").insertInto("/user/hive/warehouse/emptab/location=India")
+java.lang.RuntimeException: [1.1] failure: identifier expected
+/user/hive/warehouse/emptab/location=England
+
+Data in "emp" file
+---+-------+------+-----+
+| id| name|salary| dept|
++---+-------+------+-----+
+| 1| Mark| 1000| HR|
+| 2| Peter| 1200|SALES|
+| 3| Henry| 1500| HR|
+| 4| Adam| 2000| IT|
+| 5| Steve| 2500| IT|
+| 6| Brian| 2700| IT|
+| 7|Michael| 3000| HR|
+| 8| Steve| 10000|SALES|
+| 9| Peter| 7000| HR|
+| 10| Dan| 6000| BS|
++---+-------+------+-----+
+
+Also this is the first time loading the empty Hive table which is partitioned. I am trying to create a partition while loading the data into Hive table. Could anyone tell what is the mistake I am doing here and how can I correct it ?
+
+ANS:
+------------------------
+ I think the mistake you are doing is using "partitionBy" when you data doesn't have location column at all. You are doing static partitioning here by mentioning the path along with the partition which is correct. 
+you need to use "partitionBy" only when you have location column in your data file and you should give only table path not along with partition path, as it is dynamic partitioning.
+
+Please try the below code and let me know.
+
+empDF.
+  write.
+  mode(saveMode.Overwrite).
+  format("parquet").
+  options("/user/hive/warehouse/emptab/location=England").
+  save()
+
+If the above solution works, please mark it as the answer for this post.
 
