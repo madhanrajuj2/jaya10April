@@ -413,6 +413,9 @@ resDF.write.mode("Overwrite").saveAsTable("madhan.xyz1");
 
 ===========================================
 hive info extra:
+-------------------------
+Refreshing the table
+
 So if it seems a cache issue then try refreshing the table metadata.
 sqlContext.refreshTable("my_table")
 
@@ -593,4 +596,126 @@ scala UDF:
 // Let's define a UDF to do the filtering
 val isWarsaw = udf { (s: String) => s == "Warsaw" }
 
+--------------------------------------------------
+
+Hive Partitions:
+==============================
+Problem 1:
+partition fields (country, state)
+reading a text file and loading it in to hive table with partition fields
+
+Data:EMP
+
+no|name|sal|dept|country|state
+1,ram,1000,IT,INDIA,KAR
+2,RAVI,20000,SALES,AUS,SYD
+3,SANJAY,4000,MANAGER,US,CA
+4,KRIS,5000,IT,INDIA,HYD
+5,DEE,8000,CONSU,US,IN
+
+(data is comma separated value)
+
+on HIVe
+------------
+
+create external table emp_2part1
+(eno int,ename string,sal float,dept string)
+partitioned by (country string,state string)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+stored as TEXTFILE
+location '/apps/hive/warehouse/madhan.db/emp_2part1'
+
+
+spark:
+------------
+
+import org.apache.spark.sql.SQLContext
+import sqlContext.implicits._
+
+case class Emp(
+eno: Int,
+ename: String,
+sal: Float,
+dept: String,
+co:String,
+st: String)
+
+var empRDD1 = sc.textFile("/user/madhanrajuj2/results/problems/emp_data23tbs.txt")
+
+var empDF = empRDD1.map(
+rec=>{
+var y = rec.split(",")
+Emp(y(0).toInt,y(1).toString,y(2).toFloat,y(3).toString,y(4).toString,y(5).toString)
+}).toDF()
+
+empDF.show()
+empDF.registerTempTable("emp")
+
+sqlContext.sql("set hive.exec.dynamic.partition.mode=nonstrict")
+sqlContext.sql("insert into table madhan.emp_2part1 partition(country,state) select eno,ename,sal,dept,co as country,st as state from emp")
+
+
+on hive:
+---------------------------
+select * from emp_2part1;
+
+Output:
+----------
+2       RAVI    20000.0 SALES   AUS     SYD
+4       KRIS    5000.0  IT      INDIA   HYD
+1       ram     1000.0  IT      INDIA   KAR
+3       SANJAY  4000.0  MANAGER US      CA
+5       DEE     8000.0  CONSU   US      IN
+
+
+in warehouse dir data is stored in partitions like
+- it creates a folder like 
+    country
+	|
+	state
+ex:
+    INDIA
+     |	|
+     |	KAR (data related to karnataka is stored in this dir)
+     HYD (data related to hyd is stored in this directory)		
+    
+	    	US (data related to US country is stored under this folder and later subdivided in to states folder)
+    CA			IN
+(data related to ca)	(data related to IN state)
+
+
+Proble 2:
+==================
+partition based on Year and month
+reading data from one hive table (avro table) and writing it in to another avro table to additional partition fields
+
+hive tables;
+---------------
+create external table orders_avro
+STORED AS AVRO
+LOCATION "/apps/hive/warehouse/madhan.db/orders_avro/order_sqoopAvro"
+tblproperties('avro.schema.url'='/user/madhanrajuj2/results/avroSchema/orderavro.avsc')
+
+create external table orders_avro2part
+(order_id int,order_date string,order_customer_id int,order_status string)
+partitioned by (order_year string,order_month string)
+stored as avro
+location "/apps/hive/warehouse/madhan.db/orders_avro2part"
+
+
+spark 
+--------------
+partition
+reading data from one hive table (avro table) and writing it in to another avro table to additional partition fields
+--------
+spark-shell --conf "spark.ui.port=1256" --packages "com.databricks:spark-avro_2.10:2.0.1"
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.SparkContext
+import sqlContext.implicits._
+
+sqlContext.sql("set hive.exec.dynamic.partition.mode=nonstrict")
+sqlContext.sql(s"insert into table madhan.orders_avro2part partition(order_year,order_month) " 
+ +"select order_id,to_date(from_unixtime(cast(substr(order_date,1,10)as int))),order_customer_id,order_status,substr(from_unixtime(cast(substr(order_date,1,10)as int)),1,4) as order_year, substr(from_unixtime(cast(substr(order_date,1,10)as int)),1,7)as order_month "
+ +"from madhan.orders_avro")
 
