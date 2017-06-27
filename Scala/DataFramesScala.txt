@@ -471,6 +471,7 @@ SaveMode.Ignore	"ignore"	Ignore mode means that when saving a DataFrame to a dat
 
 File format handling
 =============================================================
+http://arun-teaches-u-tech.blogspot.in/p/file-formats.html
 
 textFile format
 ==============================
@@ -487,7 +488,39 @@ dataRDD.saveAsTextFile("/path")
 
 to save in compressed format - GzipCodec
 ---------------------------------------------
-data.saveAsTextFile("/path",classOf[GzipCodec])
+data.saveAsTextFile("/path",classOf[org.apache.hadoop.io.compress.GzipCodec])
+data.saveAsTextFile("/path",classOf[org.apache.hadoop.io.compress.SnappyCodec])
+
+Sequence file
+====================
+//to save a sequence file it has to be in (K,V) pair format - else it will give an error
+
+to Read
+--------------------
+var rdd = sc.sequenceFile("/path",classOf[org.apache.hadoop.io.Text],classOf[org.apache.hadoop.io.Text])
+
+to Write / save
+-----------------
+ordersRDD -- should have (K,V) pair pattern
+--------------------------------------
+ordersRDD.saveAsSequenceFile(/path)
+
+write in compressed way
+------------------------
+ordersRDD.saveAsSequenceFile("/path",Some(classOf[org.apache.hadoop.io.compress.GzipCodec]))
+ordersRDD.saveAsSequenceFile("/path",Some(classOf[org.apache.hadoop.io.compress.SnappyCodec]))
+-------------------------------------------------------------------
+var ordersdf = sqlContext.read.format("com.databricks.spark.avro").load("/user/cloudera/problem5/orders_avro")
+var ordersRDD = ordersdf.map(x=>(x(0).toString,(x(0)+","+x(1)+","+x(2)+","+x(3))))
+//x(0).toString ---Key
+//(x(0)+","+x(1)+","+x(2)+","+x(3)) --Value
+ordersRDD.saveAsSequenceFile("/user/cloudera/problem5/orders-sequence")
+
+ordersRDD.saveAsSequenceFile("/user/cloudera/problem5/orders-sequence1",Some(classOf[org.apache.hadoop.io.compress.GzipCodec]))
+
+var rdd = sc.sequenceFile("/user/cloudera/problem5/orders-sequence",classOf[org.apache.hadoop.io.Text],classOf[org.apache.hadoop.io.Text])
+rdd.take(10).foreach(println)
+---------------------------------------------------------------------------
 
 JSON format:
 ======================
@@ -503,8 +536,13 @@ resultdf.toJSON.saveAsTextFile("/user/madhanrajuj2/resultscal/deparmtmentsJson")
 
 to write in compressed format:
 --------------------------------
-sqlContext.setConf("spark.sql.json.compression.codec","Gzip2Codec")
-result.write.json("/user/madhanrajuj2/resultscal/deparmtmentsJson3")
+orderDF.toJSON.saveAsTextFile("/path",classOf[org.apache.hadoop.io.compress.GzipCodec])
+
+Reading a JSON file and saving it as text file
+--------------------------------------------------
+var ordersDF = sqlContext.read.json("/user/cloudera/problem5/orders-json-gzip1")
+var ordersRDD = ordersDF.map(x=>(x(0)+","+x(1)+","+x(2)+","+x(3)))
+ordersRDD.saveAsTextFile("/user/cloudera/problem5/orders-csv")
 
 
 Avro format:
@@ -554,6 +592,13 @@ to overwrite the existing file - save mode
 ----------------------------------------------
 df.write.format("parquet").mode("overwrite").save("/path/to/file")
 
+Problem 4:
+http://arun-teaches-u-tech.blogspot.in/p/cca-175-hadoop-and-spark-developer-exam_5.html
+reading back in uncompressed way
+-----------------------------------
+val orderDF = sqlContext.read.parquet("/path")
+sqlContext.setConf("spark.sql.parquet.compression.codec","uncompressed")
+ordersDF.write.parquet("/path")
 
 orc format: Optimized Row Columnar(ORC)
 =======================================
