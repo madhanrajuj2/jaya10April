@@ -1,0 +1,95 @@
+sqoop import \
+--connect "jdbc:mysql://xyzabc/retail_db" \
+--username=cloudera \
+--password=cloudera \
+--table customer \
+--target-dir /user/cloudera/sqoop_import/problem1 \
+--as-textfile \
+--outdir javafile
+
+sqoop export \
+--connect "jdbc:mysql://xyzabc/retail_db" \
+--username=cloudera \
+--password=cloudera \
+--table customer \
+--export-dir /user/cloudera/sqoop_export/problem2 \
+--input-fields-terminated-by "," \
+--outdir javafile
+
+use proble3db;
+create external table customer
+(id int, name string, lname string, city string, state string, country string)
+row format delimited fields terminated by "," lines terminated by "\n"
+stored as textfile;
+location "/user/cloudera/sqoopimport/proble3"
+
+4.....
+use proble4db;
+create table customer1
+(id int, name string, lname string, city string, country string)
+partitioned by (state string)
+row format delimited fields terminated by "," lines terminated by "\n"
+stored as textfile;
+
+insert overwrite into table customer1
+select id, string, lname, city, country, (state) state
+from customerhiveexistring
+
+5... perquet file format
+create database if not exists proble5db;
+use proble5db;
+create external table customer
+(id int, name string, lname string, city string, state string, country string)
+row format delimited fields terminated by "," lines terminated by "\n"
+stored as perquetfile
+location "/user/cloudera/sqoopimport/proble5";
+
+---------------------
+1.people count
+2.state
+3.country
+--------------------
+6...scala
+dataRDD=sc.textFile("/user/cloudera/sqoop_import/customer")
+dataRDDMap=dataRDD.map(x=>x.split("\t"),x)
+dataRDDReduce=dataRDDMap.map(x=> x._1, 1)
+dataRDDReduceByKey=dataRDDREduce.reduceByKey((x,y)=>x+y)
+dataRDDReduceByKey.saveAsTextFile("/user/cloudera/porble6Result")
+
+
+7..pyspark join
+2 table need to join on some cust_id in Int
+
+
+
+8..scala filter based on State='TX'
+filter bases on state TX
+id int, name string, lname string, city string, state string, country string
+
+
+dataRDD=sc.textFile("/user/cloudera/problem8")
+dataRDDMap=dataRDD.map(x=> x.split("\t"))
+dataFilter=dataRDDMap.filter(x=> (x._4 == "TX")) //i did this (x=> (x.split("\t")(4) == "TX")
+dataFilter.saveAsTextFile("/user/cloudera/problem8")
+
+9....sorting
+sort by some field in the middle of the table columns
+
+dataRDD=sc.textFile("/user/cloudera/problem8")
+dataRDDMap=dataRDD.map(lambda x: x.split("\t"))
+dataRDD1=dataRDDMap.map(lambda x: x[5])
+dataRDDResult=dataRDD.sortByKey()   //i should have created a key and value pair (K,V)
+dataRDDResult.savaAsTextFile("/user/cloudera/problem9")
+
+10.avro
+
+
+
+
+
+
+
+
+
+ 
+
