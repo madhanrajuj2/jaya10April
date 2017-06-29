@@ -764,3 +764,43 @@ sqlContext.sql(s"insert into table madhan.orders_avro2part partition(order_year,
  +"select order_id,to_date(from_unixtime(cast(substr(order_date,1,10)as int))),order_customer_id,order_status,substr(from_unixtime(cast(substr(order_date,1,10)as int)),1,4) as order_year, substr(from_unixtime(cast(substr(order_date,1,10)as int)),1,7)as order_month "
  +"from madhan.orders_avro")
 
+
+to Read sequence file
+---------------------------
+//To read the sequence file you need to understand the sequence getter for the key and value class to //be used while loading the sequence file as a spark RDD.
+//In a new terminal Get the Sequence file to local file system
+hadoop fs -get /user/cloudera/problem5/sequence/part-00000
+//read the first 300 characters to understand the two classes to be used. 
+cut -c-300 part-00000
+
+var ordersRDD = sc.sequenceFile("/user/madhanrajuj2/problem555/sequence",classOf[org.apache.hadoop.io.Text],classOf[org.apache.hadoop.io.Text])
+
+case class Orders(
+order_id:Int,
+order_date: String,
+order_cust_id: Int,
+order_status: String)
+
+//key,value
+//key - x(0)
+//value - x(1)
+
+var ordersDF = ordersRDD.map(
+x=> {
+var y= x._2.toString.split(",")
+Orders(y(0).toInt,y(1),y(2).toInt,y(3))
+}).toDF()
+
+sqlContext.setConf("spark.sql.orc.compression.codec","gzip")
+ordersDF.write.orc("/user/madhanrajuj2/problem555/csv-gzip")
+
+
+
+
+Certification tips:
+----------------------
+Nothing on sequence file. Questions were linked with Text file (comma, tab and pipe delimiters), JSON, parquet and Avro files.
+
+Sqoop requirements were straight forward. I didn't use boundary query.
+
+Nothing on window functions as well.
