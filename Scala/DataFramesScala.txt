@@ -796,6 +796,12 @@ ordersDF.write.orc("/user/madhanrajuj2/problem555/csv-gzip")
 
 
 
+Sample Questions:
+--------------------
+http://www.itversity.com/lessons/problem-1-importing-and-exporting-data-with-transformations/
+
+
+
 
 Certification tips:
 ----------------------
