@@ -1,0 +1,5 @@
+to understand how to work with AWS S3(Simple storage service)
+------------------------------------------------
+https://dzone.com/articles/file-handling-in-amazon-s3-with-python-boto-librar
+
+https://www.go4expert.com/articles/access-amazon-s3-python-t28964/
