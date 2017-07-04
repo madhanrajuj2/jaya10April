@@ -800,6 +800,25 @@ Sample Questions:
 --------------------
 http://www.itversity.com/lessons/problem-1-importing-and-exporting-data-with-transformations/
 
+Spark 1.6
+------------
+--supports analytical function 
+---------------------------------
+ -row_number()
+ -rank()
+ -dens_rank()
+
+--supports inline view 
+--------------------------
+ex:
+select * 
+from (select ename,sal,dens_rank() over(partition by deptno order by sal)as dk 
+      from emp)a 
+where a.dk = 1
+
+supports normal joins and ASCII joins
+--------------------------------------
+
 
 
 
