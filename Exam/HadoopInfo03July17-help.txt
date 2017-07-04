@@ -1,0 +1,32 @@
+1. Sqoop import 
+ --same which is shown in video
+2. Sqoop Export
+ --data was given with "\t" separated
+ -- delimiter to use was not mentioned
+ -- checked using command "hadoop fs -cat /path | head"
+7 spark problems
+---------------------
+3. filtering data from meta store and storing the result into hdfs in avro format/ parquet format
+4. problem on reading the data from hdfs and sorting and storing the results in some other format in sorted way
+5. joining the data sets and finding billing amount
+   fname lname amount
+   ------ ----- ------
+
+   -task where we need to list only few columns of the data sets
+
+output linke:
+------------
+lname fname	state
+
+format the output like lname & space & fname and tab(\t) and state
+6. filter only people from perticular state (TX) and store it in different format
+   
+--most of the questions where using gzip and Snappy compression
+--file formats
+-text file(, comma separated, tab separated, | separated)
+-avro
+-parquet
+-json
+
+7- there was a problem of using RDD where we need to pick 1st 7 data fields from 20 separate fields which were "\t" separated
+  
