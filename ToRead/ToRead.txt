@@ -3,3 +3,47 @@ To Read:
 Hadoop Application Architectures by Gwen Shapira, Jonathan Seidman, Ted Malaska, Mark Grover
 
 https://www.safaribooksonline.com/library/view/hadoop-application-architectures/9781491910313/ch01.html
+
+ETL vs ELT
+------------------
+https://dzone.com/articles/etl-vs-elt-the-difference-is-in-the-how
+
+YARN
+-----
+- Yet Another Resourec Negotiator (MapReduce-2)
+- in MapReduce 1, Scalability a bottle nec when cluster size grows to 400+
+- 2010 yahoo began the next generation MapReduce
+ - which can run different distributed processing frame work in parallel on the same cluster
+-Main idea is to split the JOBTRACKER responsibilitys:
+ - Resource Manager - (Job Scheduling)
+ - Application Master - (Task Monitoring)
+
+- older program written in MapReduce 1 work well with MapReuce2
+  - with MR2 only the way of execution of MR program changed
+	-so the program written in older api still works on MR2
+
+Advantages-
+---------------
+- Increased Scalability: as the JobTracker task was split in to 2 scalibity increased dramatically
+- More than one Yarn could co-exist on the same cluster.
+  along with MR we can have another distributed data processing framework (spark) on the same cluster
+- better memory utilization with the concepts of containers
+  it is same as slots in classic MR - which are fixed in nature; where as containers or more flexible
+  in MR1 for single Task tracker would have fixed slots for map task and reduce task; 
+  where as in containers it can run map/reduce or any other task and flexable in nature this results in better in memory utilization
+
+Entities in yarn
+---------------------
+1. Client - responsible for submitting the job and interact with map and reduce and HDFS framework
+2. Yarn Resource Manager - which is responsible for alocating the computing resources that are required by the job
+   job responsibilities can be classified in to 2
+   1. Scheduler - which responsible for scheduling of job; which does not perform monitoring/ tracking of job
+   2. Application Manager - which monitors the application status
+3. Yarn Node Manager - it is present on all the slave node;and responsible for launch and managing the containers
+4. MR Application Master - it is responsible for execution of the job that is associated with; 
+         - it is the one which coorbinates the task running and monitors the progress and aggregates it and sends the report to its client
+         - it is sponed(launched) under the Node Manager under the instructions of Resource Manager;
+ 		- it is sponed for ever job and terminates after the job completion
+5.Yarn Child - it manages the execution of map and reduce task; responsible to send updates and progress to the application master
+6. Distributed File System - which contains all necessary input and the place where the output files are returned to 
+
