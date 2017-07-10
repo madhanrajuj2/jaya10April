@@ -8,6 +8,41 @@ ETL vs ELT
 ------------------
 https://dzone.com/articles/etl-vs-elt-the-difference-is-in-the-how
 
+CronJob info
+----------------
+http://www.thegeekstuff.com/2009/06/15-practical-crontab-examples
+
+	to list created cron job for a current user
+	-------------------
+	crontab -l
+
+	to remove all the created cron jobs
+	--------------------
+	crontab -r
+
+	to add the cron job commands
+	-----------------------------
+	> vi cronjob.txt
+	*/5 * * * * removetable.sh
+
+	to add this job
+	-------
+	>crontab cronjob.txt
+
+	>crontab -l
+	*/5 * * * * removetable.sh
+
+	*********
+	to update the cron job output to the file
+	------------------------------------------
+	*/1 * * * * /home/madhanrajuj2/droptable.sh >> /home/madhanrajuj2/cronjoboutput1.txt 2>&1
+
+	here job is executed every minute and command output is writen to /home/madhanrajuj2/cronjoboutput1.txt
+	>> file is uppended
+        2>&1 -- helped it to do this
+
+
+
 YARN
 -----
 - Yet Another Resourec Negotiator (MapReduce-2)
