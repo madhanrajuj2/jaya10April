@@ -97,8 +97,8 @@ As of Hive 0.13, UDFs also have the option of being able to specify required jar
 
 CREATE FUNCTION myfunc AS 'myclass' USING JAR 'hdfs:///path/to/jar';
 
-TO submit spark job remotely
------------------------------------------------------
+TO submit spark job remotely - from local to Remote pc running Yarn
+-----------------------------------------------------------------------
 http://theckang.com/2015/remote-spark-jobs-on-yarn/
 
 
