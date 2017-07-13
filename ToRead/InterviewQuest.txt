@@ -1,0 +1,11 @@
+1. user defined functions (udf in spark) - 
+https://www.youtube.com/watch?v=pZQsDloGB4w
+2. data frame
+3. difference's b/w data frame and RDD
+4. Yarn architecture
+5. what is driver with respect to job exection(speak in terms of spark)
+6. yarn mode and local mode
+7. MRv1 and Yarn working explanation
+8. why we need Hbase when we have Hive
+9. Avro file format advantages
+10. have you used compression
