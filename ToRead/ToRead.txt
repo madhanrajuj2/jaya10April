@@ -82,3 +82,26 @@ Entities in yarn
 5.Yarn Child - it manages the execution of map and reduce task; responsible to send updates and progress to the application master
 6. Distributed File System - which contains all necessary input and the place where the output files are returned to 
 
+
+To Read UDF in Hive
+-----------------------------
+https://blog.matthewrathbone.com/2013/08/10/guide-to-writing-hive-udfs.html
+https://acadgild.com/blog/writing-a-custom-udf-in-spark/ --with out jar file
+Your jar will then be on the classpath for all jobs initiated from that session. To see which jars have been added to the classpath you can use:
+
+hive> list jars;
+my_jar.jar
+
+See Hive CLI for full syntax and more examples.
+As of Hive 0.13, UDFs also have the option of being able to specify required jars in the CREATE FUNCTION statement:
+
+CREATE FUNCTION myfunc AS 'myclass' USING JAR 'hdfs:///path/to/jar';
+
+TO submit spark job remotely
+-----------------------------------------------------
+http://theckang.com/2015/remote-spark-jobs-on-yarn/
+
+
+To Read interview questions:
+------------------------------
+http://hadooptutorial.info/real-time-hadoop-interview-questions-from-different-readers/
