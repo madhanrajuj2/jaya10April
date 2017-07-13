@@ -1,0 +1,3662 @@
+Youtube latest topic covered
+------------------------------------
+https://www.youtube.com/watch?list=PLf0swTFhTI8pF2LlundTPc5Pn1TIbUhri&v=VIBJSk1t8KY
+
+Good book on Spark
+------------------------
+https://www.safaribooksonline.com/library/view/sams-teach-yourself/9780134445786/
+
+Big Data Competitions-- Big data use cases
+------------------------------------------
+https://www.kaggle.com/competitions
+
+Discuss itversity
+-------------------
+http://discuss.itversity.com/t/cca175-applicable-playlists-that-include-new-syllabus/3257
+
+Good Free source for Spark
+------------------------------
+https://ace-notebook.com/getting-started-with-apache-spark-free-related-pdf.html
+
+
+Book to order
+------------
+Apache Spark in 24 Hours, Sams Teach Yourself (Sams Teach Yourself in 24 Hours)
+1,728.00  3,185.29
+You Save:   1,457.29 (45%)
+
+
+Video 1:
+---------------------
+Additional Video's
+
+-Traditional DB won't scale linearly
+
+Enterprise Applications
+------------------------
+Under enterpise applications we have following subcategories
+ - Operational (Core business support)
+ - Desision Support (which drives the decisions of the top management)
+ - Customer Analytics(which will give insight to the customers)
+
+Current Scenario - Architecture
+--------------------------------
+- Databases
+ - Databases are clustered(Oracle - RAC)
+   - High availability
+   - Fault tolerance
+   - Load balancing
+   - Scalable (Not linear)
+ - Common network storage
+   - File abstraction - file can be of any size
+   - Fault tolerance (using RAID)
+	(RAID - Redundant Array of Independent Disks, 
+	is a technology to connect multiple secondary storage devices and use them as a single storage media.)
+
+Global enqueues - to keep consistent state of the data
+---------------
+
+IN traditional database - they will do the i/o at block level - even for reading single record - this will add to the overhead
+
+to maintain consistent view of the data scaling the DB server will add more overheads
+hence they won't scale linearly
+
+
+Current Scenario - Challenges
+--------------------------------
+- RDBMS are originally designed for Operational and Transactions
+-Not linearly scalable
+  - transations
+  - data integrety
+- Expensive
+- Predefined Schema
+- data processing do not happen where data is stored (storage layer)
+  - some processing happens at database server level(sql)
+  - Some processing happens at application server level(java/.net)
+  - some processing happens at client/browser level(java scripts)
+
+Predefined Schema - is good for transaction based system; but not good for datawarehousing and analytics
+
+Evolution of Databases:
+------------------------
+- Relational DB(Oracle, informix, Sybase, MySql etc)
+- EDW and MPP(Teradata, Greenplum, Vertica, Redshift etc)
+- NoSql DB(Cassandra, HBase, MongoDB etc)
+- in memory DB(Gemfire, Coherence etc)
+- search based DB(Elastic Search, Solr etc)
+- Batch processing frameworks(Map Reduce, Spark etc)
+
+-modern applications need to be polyglot(different modules
+need different category of db)
+
+Big Data eco System - History
+------------------------------
+Started with Google search Engine
+Google use case is different for enterprises
+ - Crawl webpage
+ - index based on key words
+ - Returns search results
+As conventioanal db technology does not scale, them implemented
+
+Big Data Eco system - Advantages
+--------------------------------
+-Distributed storage
+ - fault tolerance(Raid is replaced by replication)
+-Distributed computing/processing
+ - data locality (code goes to data)
+-scalability(almost linear)
+-low cost harware(commodity)
+-low licensing costs
+
+Evolution of Hadoop eco system
+-----------------------
+- GFS to HDFS
+- Google Map reduce to Hadoop Map Reduce
+- Big Table to HBase
+
+Use Cases that can be addressed using Hadoop Eco System
+------------------------------------------------------
+- ETL - Extract, transformation and load
+- Real time reporting (HBase)
+- Batch reporting(Telephone bill to customer)
+- Operational but not transactional(we can use HBase - Messaging service in Facebook using HBase)
+
+Hadoop eco system tools/landscape
+---------------------------------
+- Operational and real time data integration
+ 	- HBase
+- ETL
+	- map reduce, hive/pig, sqoop etc
+- Reporting
+	- hive(batch)
+	- impala/presto(real time)
+- Analytics API
+	- Map Reduce
+	- other frameworks
+- Miscellaneous/complementary tools
+ -zoo keeper(co-ordination service for masters)
+ - oozie(workflow/ scheduler)
+ - chef/puppet(automation for administrators)
+ - vendor specific management tools(cloudera Manager, Hortornworks Ambari etc)
+
+Data Integration
+------------------
+Let us understand several use cases of data integration
+ - Data ingestion
+ - data processing
+ - data analysis or visualization
+
+Data Ingestion
+----------------
+data ingestion strategies are defined by sources from which data is pulled and sinks where data is stored
+- Sources
+ - relational DB
+ - Non relational DB
+ - Streaming web logs
+ - Flat files
+- Sinks
+ - HDFS
+ - Relational or non relational DB
+ - Data processing frameworks
+
+Data Processing
+----------------
+as part of data processing typically we focus on transformations such as
+- Aggregation
+- joins
+- Sorting
+- Ranking
+Data Analysis or Visualization
+--------------------------------
+Processed data is analyzed or visualized using 
+- BI tools
+- Custom visualization frameworks(d3.js)
+- Adhoc query tools
+
+Data Integration(Current Architecture)(1.03 hrs)
+--------------------------------------------------
+
+Use Case- EDW(Current Architecture)(1.22 hrs)
+----------------------------------------------
+
+Data Ingestion
+------------------
+-Apache sqoop to get data from relational DB into Hadoop
+-Apache Flume or Kafka to get data from streaming logs
+-If some processing need to be done data is processed through streaming technologies such as Flink, Storm, Spark etc
+
+Ex: Flipkart
+
+Data Processing
+---------------
+There are 2 engines to apply transformation rules at scale
+ - map Reduce(uses i/o)
+ 	-hive is the most popular map reduce based tool
+	-Map Reduce works well to process huge amount of data in few hours
+ - Spark (in memory)
+
+We will see disadvantages of Map reduce and why Spark with New Programming lanugaure such as Scala and Spark is gaining momentum
+
+Disadvantages of map reduce:
+---------------------------
+Disadvantages of Map Reduce based solution
+ - designed for batch, not meant for interactive and adhoc reporting
+ - i/o bound and processing of micro batches can be an issue
+ - Too many tools/technologies(Map reduce, hive, pig, sqoop, flume etc)to build applications
+ - Not suitable for enterprise hardware where storage is typically network mounted
+
+Apache Spark
+--------------
+- Spark can work with any file systems including HDFS
+- Processsing is done in memory - hence i/o is minimized
+- Suitable for adhoc or interactive querying or reporting
+- Streaming jobs can be done much faster than map reduce
+- Application can be developed using scala, python, java etc
+- Choose one programming language and perform 
+    - Data intefration from RDBMS using JDBC(No need of sqoop)
+    - Stream data using spark streaming
+    - Leverage data frames and sql embedded in programming language
+    - As processing is done in memory spark works well with Enterprise Hardware with network file system
+
+Data Intefration(Big Data Eco System)(1.39.30 hrs)
+--------------------------------------------------
+
+Big Data eco System(1.45 hrs)
+-----------------------------
+
+
+Youtube---link
+https://www.youtube.com/watch?v=7DMF3kwrwWE&index=2&list=PLf0swTFhTI8pF2LlundTPc5Pn1TIbUhri
+
+Video 2: fundamentals of Scala
+-------------------------------
+Scala - Functional programing language
+Scala - will be compiled in to byte code as java code
+
+REPL - Read Evaluate print and loop
+interactive mode of executing command
+
+scala> case class hw(var i:int, var j: int)
+Scala> :javap -p hw
+
+case class with variable "var i" -will define getters and setters
+along with some helper methods
+-where as "val" will define only getters; no setters
+-
+
+scala> class c(val i:int)
+scala> :javap -p c
+
+normal class will only create constructer and a setter method and one private method
+
+itversity.com/courses
+
+
+from home after 30 min's-----------------
+
+
+
+latest -> bigdata certification(39 min's)
+
+if(simpleExpression){expression}
+else {expression}
+
+val num = 23
+num: Int = 23
+
+val ans2 = if(num > 0)
+{
+val i =1
+val j=2
+i+j
+}
+else{
+val i =1
+val j=2
+i-j
+}
+ans2: Int=3
+
+link: for env setup:
+--------------------------
+itversity.com /cources- bigdatacertification-> scala-> setup environment for scala
+
+
+Scala - 2.11.8
+SBT - 0.13.x
+
+val rand1 = math.random * 100
+val gr = {
+	if (rand1 > 5)
+	 true
+	else 
+	 false
+	}
+gr
+o/p: true
+
+val isBlue = {
+if (gr) "blue" else "red"}
+isBlue
+
+
+
+val rand = math.random * 100
+val greterThanFive = {
+	if (rand > 5) true else false
+greterThanFive
+
+val isBlue = {
+ if(greaterThanFive) "Blue" else "red"
+}
+
+if greaterThanFile print 
+
+
+if i > j println
+
+
+entire body of class is a constructor
+as soon as we create a object a constructor is invoked;
+
+class Animal{
+ println("I am Animal")
+ if (math.random > 0.5)
+  println("I am male\n")
+ else println("I am female\n")
+ }
+
+val a = new Animal()
+:javap -p Animal
+
+class an(a:Int,b:Int){
+println("a vlaue:"+a+"\nb value:"+b)
+}
+val ab=new an(1,222)
+
+class Fraction(n:Int,d:Int){
+println("numerator:"+n)
+println("denominator:"+d)
+println("Num/Den="+n/d)
+}
+val a1 = new Fraction(10,5)
+
+class Fraction(val i: Int, val j: Int)
+{
+Float num= (i/j)
+den=i%j
+println("numater is "+i)
+println("denominator is "+j)
+println("Fraction: i/j"+(i/j).toDouble)
+}
+val a = new Fraction(12,3)
+
+setting up IntelliJ
+-------------------------------
+IntelliJ IDE(1.08 hrs)
+-----------------------------
+to setup intellij
+---------------------
+Scala downloads -> click on all downloads -
+2.11.8
+
+go to files-> project -> scala -> SBT 
+
+Under->src->main->scala->right click and select New Scala WorkSheet and give some name
+it will launch REPL
+Scala WorkSheet -- for REPL in IJ
+
+
+if we take a tour as last step it will ask to download plugins
+
+by default it will return Unit; there is not void in scala
+Unit - same as void
+
+def ADD(a: Int, b: Int) Int = {
+a + b
+}
+Add(2,3)
+
+class con(a: Int, b: Int){
+def this(name: String) = {
+this(1,2)
+println("1 orgs:"+ name)
+println("with out org")
+}
+def this() ={
+this(2,3)
+println("with orgs"+ a, b)
+}
+}
+val f1 = new con()
+############################################
+class con(a: Int, b: Int){
+  def this(name: String) = {
+    this(1,2)
+    println("1 orgs:"+ name)
+    println("with out org")
+  }
+  def this() ={
+    this(2,3)
+    println("with orgs"+ a, b)
+  }
+ println("default constructor"+ a +"," +b)
+  
+}
+val f1 = new con() # invlode this()
+val f2 = new con("1") # invoke this(name:String)
+val f3 = new con(1,2) # invoke statement :  println("default constructor"+ a +"," +b) - default constructor
+val f4 = new con(5,6)# invoke statement :  println("default constructor"+ a +"," +b) - default constructor
+
+fields
+-------
+mutable: var
+immutable: val
+
+require:
+------------
+special function which will invoke all the time : if it is true only it will proceed forther
+
+class dog(leg: Int){
+ require(leg > 1, "legs cant be an invalid number" ) # if condition is not meet "leg > 1"it will stop execution with given message 
+ println("after require statement")
+}
+
+new dog(0)# o/p- legs cant be an invalid number
+new dog(2) # o/p - after require statement
+
+method syntax:
+----------------------
+def methodName(arg:argType, arg2: argType): RetrunType =
+{expressio}
+
+argument by name: passing arg along with args name in any order
+
+==
+equals()
+eq ; to compare the object references
+neg ; negation of eq
+
+to import mulitmal class from the packages
+
+import org.apache._
+
+Access Modifiers:
+--------------------
+scala fields and methods are public by default
+scala lets you contol method visibility in a more powerful way
+scopes possible:
+public
+private
+object-private scope
+package
+package-specific
+
+
+
+
+Single Toan
+-----------
+1.58mins
+
+-scala provides a first class syntactic sugar fro singleton classes
+-for sinletons by definition there can only be one instance possible(classloader)
+
+>>object hi{
+ def sayHello(name:String) = "hello" + name
+}
+defined object hi
+
+hi.sayHello("India")
+
+-in java terms it can be thought upon as clas with only static methods
+-static in not a keyword in scala. instead, all members that would be static,
+including calsses should go in a singleton object instead.
+object can then be used as a factory
+
+Video 3:
+--------------------------------------------------------------
+https://twitter.com/purijtin7
+intellij setup:
+-----------------
+google - install Scala IDE - goto install->downloads->all Downloads
+
+scala 2.11.8
+jdk 1.8
+sbt version 0.13.13
+
+--------------------------------------
+Launching SBT console:
+under project folder we can say ex:"demo" folder
+sbt - it will launch console
+
+--run --command will execute all programes under the project
+
+>console --will launch scala
+
+will prompt all the programs which has main() - method (we can select which one to run)
+
+ex:
+ [1] HW
+ [2] HW7
+Enter number: 2
+[runs HW7 objects]
+
+------------------------------------
+
+20min's
+setting up eclips for scala
+
+object hw {
+	def main(args: Array[String]): Unit = {
+	 println("Hello World")
+
+	}
+}
+
+scala> hw.main(Array(" "))
+
+----------------------------------------------
+class Time(hours: Int, minutes:Int, seconds: Int) {
+
+require(hours >=0 && hours < 60, "Invalid time")
+
+def minutesOfDay: Int = {
+ minutes
+}
+println(hours+ ":" + minutes + ":" + seconds)
+}
+
+in sbt->console 
+val a=new Time(10,20,30)
+o/p: 10:20:30
+----------------------------
+
+class Time(hours: Int, minutes:Int, seconds: Int) {
+
+require(hours >=0 && hours < 60, "Invalid time")
+
+def minutesOfDay: Int = {
+ minutes
+}
+
+def apply(hours: Int, minutes: Int, seconds: Int): Unit = {
+println("In apply method")
+}
+println(hours+ ":" + minutes + ":" + seconds)
+
+}
+
+object Time{
+ def main(args: Array[String]): Unit = {
+  println("Time")
+}
+}
+
+-Scala does not have "Static methods"
+-As long as class name and the object name are same there are called companian classes
+-apply() -method will tipically will be a part of object
+
+var a = new SimpleClass(10,12,16) --this will invoke constructur
+
+a(10,20,30) -- will invoke apply() method 
+
+
+case class c(i: Int, s: String)
+javap -p c
+javap -p c$ ---c$ is a object(we will get additional functionality)
+
+class Time(hours: Int, minutes:Int, seconds: Int) {
+
+require(hours >=0 && hours < 60, "Invalid time")
+
+def minutesOfDay: Int = {
+ minutes
+}
+
+def apply(hours: Int, minutes: Int, seconds: Int): Unit = {
+println("In apply method")
+}
+println(hours+ ":" + minutes + ":" + seconds)
+
+}
+
+object Time{
+ def main(args: Array[String]): Unit = {
+  println("Time")
+}
+def apply(): Unit = {
+	val a= new Time(10,5,20)
+	}
+}
+
+for sbt console:
+Time()
+O/P: 10:5:20
+
+//also try to parameterize apply() method of object
+
+def apply(hours: Int, minutes: Int, seconds: Int): Unit = {
+println("In apply method")
+}
+println(hours+ ":" + minutes + ":" + seconds)
+}
+-----------------------------------------------
+
+54 min'st
+class hierarcy
+
+all the class are subtype of "Any"
+
+Value class: where ever it has to execute in premitive;
+
+Any reference:
+
+Scala.Nothing: is a subclass any every thing
+
+Some UseFul collection methods:\
+
+val l: List[Int] = List(1,2,3)
+val ls = List(1,2,3)
+
+ls.head
+1
+ls.take(2)
+1,2
+ls.tail  //doutfull   "ls.tail(2)"
+2,3
+ls.last
+3
+ls.contains(7)
+boolean = false
+ls.zip(List(4,5,6))
+List[(Int,Int)] = List((1,4),(2,5),(3,6))
+
+(0 to 10)
+(1 to 10).toList
+
+l. press tab it will list all the supported collection functions
+
+:paste --to write muliple lines of code
+
+val ls = List(1,2,3)
+ls :+4
+ls = ls :+ 4 -- to add element 4 at the end
+
+ls = 0 +: ln  --to add element at the start of the list
+
+0 :: ls  --to add at the start of the list
+
+val l=(1 to 10).toList
+l.size
+l.::(0)  --to add the start of list
+
+val k = (11 to 15).toList
+
+l = l ++ k  --to append to the existing list
+
+ppt solve the collection exec:
+------------
+
+Set -- set contains no duplicates
+----------------------------------
+
+Tuple --pair is first class in scala
+-------------------------------------
+
+in list all the elementes should be homoginius
+------------------------------------------------
+val l = List((1, "Hello"),(2,"world")) -- all to tuples has to be of same time homoginius
+
+Map
+-------
+map is a collection of muliple key value pair
+keys have to be unique.
+
+Array
+---------
+java arrays 
+
+some useful collection methods:
+isEmpty
+map
+filter
+groupBy
+toSet
+drop
+dropWhile
+reverse
+combinations
+++
+foldleft
+foldright
+
+Lazy val:
+-------------
+val is executed when it is defined
+lazy val is executed when it is accessed for the first time
+
+lazy val y = { println("y");2 }
+y --it executes only when used
+
+
+
+val l = (1 to 100).toList
+
+var total = 0
+
+for (value <- l){
+ total +=value
+}
+print(total)
+
+*****
+we should use scala api instead of for loops.
+- if our app should be scalable it should be immutable
+
+l.sum
+
+
+data processing:
+--------------------
+--data standardization -- phone no. numeric
+--special character in data - cleaning the data
+--data filtering -- canceled not required
+--aggregation 
+
+(row level transfermation)
+
+
+l.sum  -- scala api usage
+
+l.filter(x => {
+	x%2 == 0} )  --to sum only even numbers
+
+l.filter(x => {
+	x%2 == 0} ).sum  --to sum only even numbers
+
+l.filter(x => x%2 == 0).sum
+
+val t = List((1,"hellow"),(2,"world"),(3,"how"),(4,"are"), (5,"you"), (6,"doing"))
+t(0) - first element in collection
+t(1) - second element in collection
+
+t(0)._1 -- to read first element
+o/p- 1
+
+t.map(x => x._1) --gets all the 1 element from the tuple
+
+t.map(x => x._1).sum
+t.map(x => x._1).min
+t.map(x => x._1).max
+
+t.map(x => x._2)  -gets the 2nd element from the tuple
+
+t.sortBy(k => k._2) -- sorts on second element
+
+t.map(x => x._2)
+
+
+
+t.map(x => x.split(","))
+
+
+
+Video 4:
+--------------------------------
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.36"
+
+facat patran: -- understand this Best design pattern
+--------------
+all operation has to be done at DB layer - we should not do more of i/o in real project
+
+21.05 min's -- link for mysql driver
+
+**when to use statement/prepared statement -- jdbc programming; when to use what
+
+file name : EmployeesCommission.scala
+	--------------------------------
+/**
+  * Created by cloudera on 7/7/17.
+  */
+
+import java.sql.DriverManager
+import java.sql.Connection
+import com.typesafe.config._
+
+case class EmployeesCommission(first_name:String,
+                               last_name: String,
+                               salary: Double,
+                               commission_pct: Double){
+
+  override def toString(): String = {
+    s"first_name:" + first_name + ";"+ "last_name" + last_name + ";" + "Commission_Amount:" + getCommissionAmount()
+  }
+
+def getCommissionAmount(): Any = {
+  if(commission_pct == null) {
+    "Not eligible"
+  }
+  else salary * commission_pct
+}
+
+}
+
+object CommissionAmount {
+  def main(args: Array[String]): Unit = {
+    val driver = "com.mysql.jdbc.Driver"
+    val url = "jdbc:mysql://nn01.itversity.com:3306/hr"
+    val username = "hr_ro"
+    val password = "itversity"
+
+    Class.forName(driver);
+    val connection = DriverManager.getConnection(url, username, password)
+    val statement = connection.createStatement()
+    val resultSet = statement.executeQuery(s"SELECT first_name,last_name,salary, commission_pct FROM employees")
+    while (resultSet.next()) {
+        val e = EmployeesCommission(resultSet.getString("first_name"),
+        resultSet.getString("last_name"),
+        resultSet.getDouble("salary"),
+        resultSet.getDouble("commission_pct"))
+      println(e)
+    }
+      //val host = resultSet.getString("host")
+      //val user = resultSet.getString("user")
+      //println("host,user = "+ host+","+user)
+    //}
+
+  }
+}
+
+57 min's
+we have to externalise parameter like username/password we should not hardcode
+-------------------------------------------------------------------------------
+we use to have property file with all 3 environment (dev,UAT,Prod) and shiped along with the jarfile
+
+why?
+1. jdbc connectivity
+2. 
+
+search for "scala typesafe config"
+ -> search for "sbt"
+ ->
+
+updating "build.sbt" with apropreate jar file (5.1.36)
+
+58.00 min's - externalize parameter: like hiding UN and PW path
+
+1... hrs -- dependencies 
+-------------------------------------------
+
+under "build.sbt"
+
+name := "wlabs"
+version := "1.0"
+scalaversion := 2.11.8
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.36"
+libraryDependencies += "com.typesafe" % "config" % "1.3.1"
+
+com.typesafe - group id
+config- artifact id
+1.3.1 - version
+
+creating all properties under one file -- dev, UAT, production
+right click on Scala folder
+		->select New-> File
+			-give a name as "application.properties"
+
+add following lines of code under "application.properties" file:
+-----------------------------------
+dev.host = nn01.itversity.com
+dev.port = 3306
+dev.db = hr
+dev.user = hr_ro
+dev.pw = itversity
+
+
+
+application.properties
+-----------------------
+dev.host = nn01.itversity.com
+dev.port = 3306
+dev.db = hr
+dev.user = hr_ro
+dev.pw = itversity
+
+
+
+
+we have to import
+import com.typesafe.config._
+
+and add following line under main() function
+
+val props = ConfigFactory.load()
+val host = props.getConfig(args(0)).getString("host")
+val port = props.getConfig(args(0)).getString("port")
+val db = props.getConfig(args(0)).getString("db")
+val url = "jdbc:mysql://"+ host + ":" + port + "/" + db
+val username = props.getConfig(args(0)).getString("user")
+val password = props.getConfig(args(0)).getString("pw")
+
+Full program:
+---------------------------
+
+/**
+  * Created by cloudera on 7/7/17.
+  */
+import java.sql.DriverManager
+import java.sql.Connection
+import com.typesafe.config._
+
+case class EmployeesCommission(first_name:String,
+                               last_name: String,
+                               salary: Double,
+                               commission_pct: Double){
+
+  override def toString(): String = {
+    s"first_name:" + first_name + ";"+ "last_name" + last_name + ";" + "Commission_Amount:" + getCommissionAmount()
+  }
+
+  def getCommissionAmount(): Any = {
+    if(commission_pct == null) {
+      "Not eligible"
+    }
+    else salary * commission_pct
+  }
+
+}
+object CommissionAmount {
+  def main(args: Array[String]): Unit = {
+    val driver = "com.mysql.jdbc.Driver"
+    val props = ConfigFactory.load()
+    val host = props.getConfig(args(0)).getString("host")
+    val port = props.getConfig(args(0)).getString("port")
+    val db = props.getConfig(args(0)).getString("db")
+    val url = "jdbc:mysql://"+ host + ":" + port + "/" + db
+    val username = props.getConfig(args(0)).getString("user")
+    val password = props.getConfig(args(0)).getString("pw")
+
+    Class.forName(driver);
+    val connection = DriverManager.getConnection(url, username, password)
+    val statement = connection.createStatement()
+    val resultSet = statement.executeQuery(s"SELECT first_name,last_name,salary, commission_pct FROM employees")
+    while (resultSet.next()) {
+      val e = EmployeesCommission(resultSet.getString("first_name"),
+        resultSet.getString("last_name"),
+        resultSet.getDouble("salary"),
+        resultSet.getDouble("commission_pct"))
+      println(e)
+    }
+    //val host = resultSet.getString("host")
+    //val user = resultSet.getString("user")
+    //println("host,user = "+ host+","+user)
+    //}
+
+  }
+}
+
+under Run menu
+-> select Edit Configurations
+ -> enter Program arguments
+     -- dev
+	select Apply and Ok
+
+and Run the application 
+ --it will fetch properties from "dev"
+
+To run the application form the console:
+----------------------------------------------
+$sbt "run-main CommissionAmount dev"
+
+--command: sbt "run-main
+--application name: CommissionAmount
+--option(parameter): dev
+
+To Run it from the scala console
+---------------------------------
+scala>CommissionAmount.main(Array("dev"))
+
+
+
+name
+
+application.properties
+-----------------------
+dev.hostname = nn01.itversity.com
+dev.port = 3306
+dev.db = hr
+dev.
+
+1.32min's
+
+Spark:
+-------------------------------------------------
+***
+for dependencies we have to know which version of spark running on production cluster
+we can search of following:
+sbt spark 1.6.2 scala 2.10
+
+build.sbt --under it give following dependencies
+
+libraryDependencies += "org.apache.spark" % "spark-core 2.10" % "1.6.2"
+--------------------------------------------------
+"spark-core 2.10" -- spark-core - is a jar file
+		     2.10 - is scala version using which we have compiled jar-file
+"1.6.2" -- Spark version	
+-----------------------------------------------------
+
+advantage of SBT - if we have 100 scala files and modify one file and compile, it will compile only one file instead of all files in the project. but in maven it will complile all files in scala
+
+Spark mode
+-------------
+local mode --we run in yarn/local mode
+yarn mode ---
+mesos mode
+
+
+spark-shell ---local mode --it will execute in local mode
+pyspark --python mode
+
+distributed mode:
+-----------------
+spark-shell --master yarn ---cluster mode --production we need to use "yarn", for developement we can use "local" mode
+
+mesos -- is also a production mode.
+
+sc  ---SparkContext -- if it is not working then restart spark
+
+1.spark-shell
+sqlContext  --to run hive query
+
+2.spark-sql --to access hive db
+
+3.pyspark
+
+spark ---is the execution Engine
+
+https://www.youtube.com/watch?v=_oOSVgrkUlQ&index=4&list=PLf0swTFhTI8pF2LlundTPc5Pn1TIbUhri
+
+Video 5: Spark-Scala --- i can skip
+----------------------
+Iterator function --last program which was crated using while is writen in iterator function
+Iterator.continually((resultSet,resultSet.next)).
+takeWhile(rec => rec._2).
+ma(_._1).map(res=> {
+EmployeesCommission(rec.getString("first_name"),
+rec.getString("last_name"),
+rec.getDouble("salary"),
+rec.getDouble("commission_pct"))
+}).foreach(rec=> {
+ println(rec)
+})
+
+while function writen using While() function writen using Iterator.continually
+--------------------------------------------------------------------------------
+ /*while (resultSet.next()) {
+      val e = EmployeesCommission(resultSet.getString("first_name"),
+        resultSet.getString("last_name"),
+        resultSet.getDouble("salary"),
+        resultSet.getDouble("commission_pct"))
+      println(e)
+    } */
+
+Tuple - datastructure which can have hetarogenius element
+
+Companien object - when the class name and object name are same
+
+***
+scala collection - single threaded, in-memory
+spark collection - distributed and in-memory
+
+val conf = new org.apache.spark.SparkConf().setAppName("Testing").setMaster("local")
+
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+val conf = new SparkConf().setAppName("Test").setMaster("local")
+val sc = new SparkContext()
+
+(1 to 1000).toList  //is of type list
+
+val r = sc.parallelize((1 to 1000).toList) //spark type collection of type RDD and of type Int
+val e = r.filter(x => x%2 == 0)
+r.count
+e.count
+e.reduce((agg, value) => agg+value)
+val l = e.collect() ---to convert RDD in to an array
+
+sc.parallelize((1 to 1000).toList).filter(_ % 2 == 0).reduce(_ + _)
+
+
+
+sc.parallelize((1 to 1000) -- to create RDD outof scala collection
+
+
+val orders = sc.textFile("file:///data/retail_db/orders")
+
+val orders = sc.textFile("C:///Users/itversity/Research/data/retail_db/orders")
+orders.first()  --to featch 1st record
+
+
+val ordersMap = orders.map(rec => {
+ (rec.split(",")(3), 1)
+})
+val orderStatusCount = ordersMap.reduceByKey((agg,value)=> agg+value)
+orderStatusCount.collect().foreach(println) //we have to use take() --instead of collect() method
+
+word count:
+---------------
+val orders = sc.textFile("file:///data/textdata.txt")
+
+//val c = orders.map(rec=> rec.split(" "))  ---returns array of strings Array[String]
+
+val cRDD= orders.flatMap(rec => rec.split(" "))
+val mRDD = cRDD.map(x=> (x,1))
+
+val count = mRDD.reduceByKey((agg, value) => agg + value)
+count.collect().foreach(println)
+
+
+
+
+
+data transformations:
+-cleaning the data - removing unnecessary data, removing special char -row level transformations
+-standardization of data
+
+Video 6:  ---good one --Spark execution sequence
+-----------------------------------------
+
+40 min's 
+new project creation:
+
+
+build.sbt
+
+java 1.8
+sbt 0.13.13
+scala: 2.10.6
+
+
+spark 1.6.2 2.10 repository -- to search for repository
+(Maven Repository)
+
+libraryDependencies += "org.apache.spark" % "spark-core 2.10" % "1.6.2"
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+
+objcet wc{
+
+def main(args:Array[String]): Unit = {
+ val conf = new SparkConf().setMaster("local").setAppName("word count")//setMaster - helper method use to say how it has to run
+ val sc = new SparkContext(conf)
+ val randomtext = sc.textFile(args(0))
+ randomtext.flatMap(rec => rec.split(" ")).
+	 map(rec => (rec, 1)).
+	 reduceByKey((agg, value) => agg + value).
+	 map(rec=> rec.productIterator.mkString("/t")).
+	 saveAsTextFile(args(1))
+}
+}
+
+
+input: /home/madhanrajuj2/wordCountData.txt
+output: /user/madhanrajuj2/results/intel
+
+hadoop fs -ls /user/madhanrajuj2/results/intel
+
+ val conf = new SparkConf().setMaster
+
+object wc {
+ def main(args: Array[String]): Unit = {
+    val  conf = new SparkConf().setMaster("local").
+	setAppName("word count") //setMaster() --saying how prog has to executed(ex in "local mode")
+    val sc= new SparkContext(conf)
+    val randomtext = sc.textFile(args(0)) //args(0) - 1st input argument
+    randomtext.flatMap(rec => rec.split(" ")).
+	 map(rec => (rec, 1)).
+	 reduceByKey((agg, value) => agg + value).
+	 map(_.productIterator.mkString("\t")).	
+	 saveAsTextFile(args(1)) //args(1) - 2nd input arguments
+
+
+}
+}
+
+go to ->run->edit configuration->Application-> Program Argumrnets
+
+/user/data/wordcount.txt /user/data/output/wordcop
+
+/user/data/wordcount.txt - input path
+/user/data/output/wordcop - output path
+
+on lab-
+/home/madhanrajuj2/wordCountData.txt /user/madhanrajuj2/results/intel
+
+spark-submit \
+--class wc \
+--conf spark.ui.port = 2298 \
+wc_2.10-1.0.jar file:///home/madhanrajuj2/wordCountData.txt /user/madhanrajuj2/results/intel3
+
+hadoop fs -ls /user/madhanrajuj2/results/intel1
+hadoop fs -cat ~/wordCountData.txt
+on VM
+/home/cloudera/wordCount.txt /user/cloudera/result/wc_result
+hadoop fs -ls /user/cloudera/result/wc_result
+hadoop fs -mkdir /user/cloudera/result/wc_result
+go to the project location and say "sbt" --to get scala prompt
+
+//to format output to have "key" and tab separated and "value"
+-----------------------------------------------------------
+val r = m.reduceByKey( _+_ )
+//r.map(rec=> rec.productIterator.mkString("\t")).collect().foreach(println)
+r.map(rec => rec._1 + "\t" + rec._2)
+
+
+to transform each record at row level we have 3 option
+-Map
+-flatMap
+-filter
+
+
+Building a jar file
+-----------------------
+sbt package --we should be under project folder "wc" application folder which has following files (project, target, src, build.sbt)
+
+jar file will be created under /IdeaProjects/wc/target/scala-2.10/wc_2.10-1.0.jar
+
+--wc_2.10-1.0.jar --required jarfile
+
+wc - application name
+2.10 - scala version using which application is compiled
+1.0 - application version
+
+scp wc_2.10-1.0.jar madhanrajuj@gw01.itversity.com:~ --(~ --/home/madhanrajuj)
+scp wc_2.10-1.0.jar madhanrajuj2@gw01.itversity.com:~
+
+to login to lab
+ssh madhanrajuj@gw01.itversity.com
+pw: 
+
+to submit job:
+-----------------
+spark-submit \
+--class wc \
+--conf spark.ui.port=22222 \
+wc_2.10-1.0.jar /public/randomtextwriter/part-m-00000 /user/madhanrajuj/wcop
+
+hadoop fs -ls /user/madhanrajuj/wcop
+
+hadoop fs -tail /user/madhanrajuj/wcop/part-00000  --prints last one page
+
+
+Tracking URL -- to know how job was executed
+
+Spark history server  --to know job history
+
+in dev environment - we have to run in local mode
+prodection environment - we have to run in yarn mode
+
+to externalize the parameters 1.33 mins
+-----------------------------
+to to build.sbt
+
+search for "scala typesafe config"-> go to github-> search for sbt and take the dependencies
+
+under build.sbt
+-------------------
+libraryDependencies += "com.typesafe" % "config" % "1.3.1"
+
+go to wc program
+
+and modify
+
+1.36 mins
+
+val props = ConfigFactory.load()
+valconf = new SparkConf().
+	setMaster(props.getConfig(args(0)).getString("executionMode"))
+
+1.35 mins
+go to resources->right click select new and select file->file name as application.properties
+
+application.properties(create it under scala folder - right click New-> files->"application.properties"- under this file defile all parameters)
+----------------------------
+dev.executionMode = local 
+prod.executionMode = yarn-client
+
+
+object wc {
+ def main(args: Array[String]): Unit = {
+    val props = ConfigFactory.load()  //to load the "application.properties"	
+    val  conf = new SparkConf().
+	setMaster(props.getConfig(args(2)).getString("executionMode")).
+	setAppName("word count") //setMaster() --args(2) saying how program has to executed("yarn mode")
+    val sc= new SparkContext(conf)
+    val randomtext = sc.textFile(args(0)) //args(0) - 1st input argument
+    randomtext.flatMap(rec => rec.split(" ")).
+	 map(rec => (rec, 1)).
+	 reduceByKey((agg, value) => agg + value).
+	 map(_.productIterator.mkString("\t")).	
+	 saveAsTextFile(args(1)) //args(1) - 2nd input arguments
+
+
+}
+}
+
+test localy and rebuild the jar file
+
+cd ~/IdeaProjects/wc
+sbt ~compile ---~compile --will rebuild the jar fail after modification ""
+
+sbt package --to create a jar file
+
+hadoop fs -rm -R /user/madhanrajuj/wcop
+
+
+
+scp wc_2.10-1.0.jar madhanrajuj@gw01.itversity.com:~ --(~ --/home/madhanrajuj)
+
+spark-history server - runs on cluster under port 18080
+
+gw01.itversity.com:18080
+
+
+to submit job: 
+---------------------------------------
+here we are giving 3 arguments
+- /public/randomtextwriter/part-m-00000
+- /user/madhanrajuj/wcop
+- prod
+-----------------
+
+spark-submit \
+--class wc \
+--master yarn \
+--conf spark.ui.port = 22222 \
+wc_2.10-1.0.jar /public/randomtextwriter/part-m-00000 /user/madhanrajuj/wcop prod
+
+
+1.55min's
+------------
+go to spark config
+-------------------
+we can get spark env properties
+spark executor - how many executer will be used
+spark executor cores - how many cores will be given to each executor( no of cpu threds running in parallel )
+spark executor memory - how much memory is given to each executor
+spark driver memory - jvm memory
+
+
+go to user guide and select Overview -> running on yarn
+
+--driver-memory 4g
+--executor-memory 2g \
+--executor-cores 1 \
+
+we need to understand capacity of our cluster -to tune the spark jobs at run time
+-------------------------------------------
+--
+
+spark-submit \
+--class wc \
+--master yarn \
+--conf spark.ui.port = 22222 \
+--num-executors 6 \
+--executor-cores 2 \
+--executor-memeory 2g \
+wc_2.10-1.0.jar /public/randomtextwriter/part-m-00000 /user/madhanrajuj/wcop prod
+
+
+Externalize the parameters(using typesafe config)
+--execution mode: local/yarn-client
+-------------------------------------------
+
+application.properties
+---------------------------------
+dev.executionMode=local
+
+prod.executionMode=yarn-client
+----------------------------------
+
+  */
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import com.typesafe.config.ConfigFactory
+object wc {
+  def main(args:Array[String]): Unit = {
+    val prop = ConfigFactory.load()
+    val conf = new SparkConf().setMaster(prop.getConfig(args(2)).getString("executionMode")).setAppName("word count")
+    val sc = new SparkContext(conf)
+    val randomtext = sc.textFile(args(0))
+    randomtext.flatMap(rec => rec.split(" ")).
+      map(rec => (rec, 1)).
+      reduceByKey((agg, value) => agg + value).
+      saveAsTextFile(args(1))
+  }
+
+}
+
+1. define dependencies in build.sbt
+2. write a program
+3. create a application.properties file 
+	define the parameters which we need to externalize
+4. create a jar file
+	- by executing "sbt package"
+		under project folder ex: /wc
+5. ship the jar to cluster and execute it 
+	spark-submit \
+	--class wc \
+        wc_2.10-1.0.jar <input-path> <output-path> <dev/prod>
+
+sbt ~compile
+when we modify the program and we want jar-file to refresh automatically we can use "sbt ~complile"
+
+Video 7: explanation of HDFS and hadoop commands -just go through the commands that is enough
+-------------------------------------------------------------------------------
+spark history server --why ? it started 270 jobs
+
+ssh root@gw01.itversity.com
+
+to copy jar file
+scp target/scala-2.10/wc_2.10-1.0.jar madhanrajuj@gw01.itversity.com:~
+
+--to get the class name 
+--------------------------
+jar tvf wc_2.10-1.0.jar 
+
+spark-submit --class wc \
+--num-executors 5 \
+--master yarn \
+wc_2.10-1.0.jar /public/randomtextwriter /user/wcop prod
+
+takeout the "tracking url"
+
+
+
+hdfs fsck ---fsck -- file syste check
+hdfs - tools for input path
+
+hdfs fsck /user/madhanrajuj/wordcount.txt -files -blocks --to get info on file stored in HDFS
+
+hdfs fsck /user/madhanrajuj/wordcount.txt -files -blocks -locations
+
+hdfs fsck /user/madhanrajuj/workdcount.txt -files -blocks -locations
+
+********total no. of block which drives the total no. of tasks.
+
+cd /etc/hadoop/conf -- to know the replication factor and block
+
+"core-site.xml and hdfs-site.xml" --which controls the behavior of hdfs
+
+core-site.xml -- we can get node name 
+
+hdfs-site.xml -- block size, replication factor
+
+lab: ambari access- to view the configuration
+---------------------------------------------------
+gw01.itversity.com:8080/#main/services/HDFS/configs
+
+changing conf parameter while copying the data to hdfs:
+--------------------------------------------------------
+hadoop fs -copyToLocal /user/madhanrajuj/cards .
+hadoop fs -rm -R /user/madhanrajuj/cards
+
+block size -64 mb
+replication factor -1
+
+if we need to change certain configuration which changing the acctual parametes under /etc/hadoop
+- using -Ddfs
+
+override blocksize and replication factor
+-------------------------------------------
+hadoop fs -Ddfs.blocksize=67108864 -Ddfs.replication=1 -copyFromLocal cards /user/madhanrajuj
+
+hadoop fs -ls /public/
+
+hdfs fsck /user/madhanrajuj/cards -files -blocks -locations
+
+-we can not modify the block size of file stored in hdfs
+-but we can change the replication factor
+
+hadoop fs -help setrep
+
+hadoop fs -setrep 2 /user/madhanrajuj/cards --changing the replication factor to 2
+
+hdfs fsck /user/madhanrajuj/cards -files -blocks -locations
+
+cat /etc/hosts --list all the cluster nodes info
+
+ssh root@wn02
+
+meta data - all the properties of the file is stored in the file.
+
+
+Video 8:  --Scala programm - Total revenu per day - writen in sbt console
+--------------------------------------------------------------------------
+
+du -sh retail_db  --disk usage of retail_db.
+
+scp -r madhanrajuj@gw01.itversity.com:/data/retail_db /users/itversity/research  --to copy data from remote server lab.
+
+intelliJ - create a new project
+
+update build.sbt
+libraryDependencies += "org.apache.spark" % "spark-core 2.10" % 
+
+start repl
+
+got base dir of project->run -> sbt console
+
+spark is distributed processing engine
+mapreduce - is a distributed processing engine
+
+Total Revenue per day--------------------
+-------------------------------------------
+import org.apache.spark.{SparkConf, SparkContext}
+val conf = new SparkConf().setMaster("local").setAppName("Total Revenue per day")
+val sc = new SparkContext(conf) --sc will start a web service on a poernumber
+val orders = sc.textFile("/user/itversity/research/data/retail_db/orders")
+orders.take(5).foreach(println)
+
+val ordersFiltered = orders.filter(rec => rec.split(",")(3) == "CLOSED" || rec.split(",")(3) == "COMPLETE")
+ordersFiltered.take(5).foreach(println)
+val ordersMap = ordersFilter.map(x=>(x.split(",")(0).toInt,x.split(",")(1)))
+ordersMap.take(5).foreach(println)
+
+val orderItems = sc.textFiles("/user/itversity/research/data/retail_db/order_Items")
+val orderItemsMap = orderItems.map(x => (x.split(",")(1).toInt, x.split(",")(4).toFloat))
+orderItemsMap.take(5).foreach(println)
+
+val ordersJoin = ordersMap.join(orderItemsMap)
+ordersJoin.take(5).foreach(println)
+
+val ordersJoinMap = ordersJoin.map(x=> x._2)
+ordersJoinMap.take(5).foreach(println)
+
+val ordersJoinMapGBK = ordersJoinMap.groupByKey()
+
+//val ordersJoinMapGBK = ordersJoinMap.groupByKey()
+//ordersJoinMapGBK.take(5).foreach(println)
+//val l = List(250.10, 524.36, ....)
+//l.sum
+
+val ordersJoinMapGBKMap = ordersJoinMapGBK.map(rec => (rec._1, rec._2.sum))
+ordersJoinMapGBKMap.take(5).foreach(println)
+
+val ordersJoinMapRBK = ordersJoinMap.reduceByKey((agg, value) => agg+value)
+ordersJoinMapRBK.collect().foreach(println)
+
+val ordersJoinMapABK = ordersJoinMap.aggregateByKey(0.0)
+			((intAgg, intVal) => intAgg + intVal,
+			 (finAgg, finVal) => finAgg + finVal)
+
+ordersJoinMapABK.collect().foreach(println)
+
+
+
+//groupByKey() --does not use combiner
+
+//reduceByKey() and aggregateByKey() --uses combiner
+
+//aggregateByKey()  --we should use;if combiner and reducer logic is different
+//reduceByKey() -- we should use; if combiner and reducer logic is same
+
+
+
+/**
+val t = (657722,("2014-05-23 00:00:00.0", 119.98))
+
+t._1 --657722
+t._2 --2014-05-23 00:00:00.0", 119.98
+t._2._1 --2014-05-23 00:00:00.0
+t._2._2 --119.98
+
+
+
+*/
+
+
+Video 9 -- Mapreduce explanation & writing prog in ItelliJ with hadoop file system functions
+--------------------------------------------------------------------------------------------
+
+Hash function - generating a numeric value for a given input - integer value - unique number
+23mins --*****
+
+Mapreduce explanation --first part 30+ mins
+
+DAG - directed acyclic graph
+
+
+"Black|spade|2".split("|")  --| special char
+b l a c k s p a d e 2
+
+"Black|spade|2".split("\\|") -- we need to esc with \\
+black spade 2
+
+map(rec => (rec._1, rec._2.size)).
+	collect().foreach(println)
+
+size - scall function to get no. of elements in the list
+
+import org.apache.spark.{SparkContext, SparkConf}
+
+57 min's
+writing Total revenu per day in intelliJ IDE
+---------------------------------------------
+
+write this program in IDE 
+video 5 - base for using IntelliJ IDE
+
+
+build.sbt
+
+libraryDependencies += "org.apache.spark" % "spark 2.10" % 
+
+
+********1.41 mint --- program writing *************** with parameters
+using hdfs function to handle file -like inputfile present/ outdir exists
+
+we have to use file system object to validate file system in HDFS
+
+val fs = FileSystem.get(sc.hadoopConfiguration)
+if(!fs.exists(new Path(inputBaseDir))) {
+ println("Base Directory does not exist")
+ return
+}
+
+val op = new Path(outputPath)
+if(fs.exists(op))
+ fs.delete(op, true)
+
+
+
+typeSafeConfig - to externalize parameters
+	
+
+Video 10:  -- explanation of aggregateByKey(); analyzing election data
+----------------------------------------------------------------------
+
+Discurs itversity - bigdata->exercies
+
+DailyRevenusAndOrderItems
+-----------------------------
+object DailyRevenueAndOrderItems
+
+val orderJoinMapABK = orderJoinMap.aggregateByKey((0.0,0)) (
+ (intAgg: (Double, Int), intVal: Double) => (intAgg._1 + intval, intAgg._2 +1)
+ (totAgg: (Double,Int), totVal: (Double,Int)) => (totAgg._1 + totVal._1, totAgg._2 + totVal._2)
+ )
+
+or
+
+val ordersJoinMap = ordersJoin.
+	map(rec => (rec._1, (rec._2, 1))).
+	reduceByKey((agg, value) => (agg._1 + value._1, agg._2 + value._2))
+
+combiner logic and reducer logic --in hadoop mapreduce
+sequence off and combiner off --in spark
+
+37 mins
+----------
+analyzing election data
+
+
+import org.apache.spark.{SparkConf, SparkContext}
+
+45 min's - mapPartitionsWithIndex -- Explaned 
+
+//mapPartitionsWithIndex -- work only when there is single file with header - won't work for multipal files with header
+val data = fileContents.mapPartitionsWithIndex((idx, itr) => if(idx == 0) itr.drop(1) else itr)
+//mapPartitionsWithIndex spark api
+//itr.drop(1) --scala api
+
+val dataUP = data.filter(rec => rec.split("\t")(0) == "Uttar Pradesh")
+dataUP.take(10).foreach(println)
+
+val dataPerConstituencyAndParty = dataUP.map(rec => {
+ 	val r = rec.split("\t")
+	((r(0), r(1)),(r(6),r(10).toInt))
+	})
+
+val dataPerConstituency = dataPerConstituencyAndParty.groupByKey()
+
+dataPerConstituency.collect().foreach(println)
+
+dataPerConstituencyAndParty.count
+
+//def recalculateWithAlliance()
+
+def recalWithAlliance(rec: Iterable[(String, Int)]): Iterable[(String,Int)] = {
+
+val l = List(("BJP", 455274), ("BSP", 309858), ("INC",52598), ("SP",242366), ("AITC",5115))
+
+val lg = l.map(r => {
+	if(r._1 == "sp" || r._1 == "INC")
+	  ("ALLY", r._2)
+	else
+	 r
+	})
+
+lg.groupBy(r=> r._1).map(r => (r._1, r._2.map(_._2).sum))
+
+def recalculateWithAlliance(rec: Iterable[(String,Int)]): Iterable[(String,Int)]={
+
+rec.map(r => {
+	if(r._1 == "INC" || r._1 == "SP")
+	 ("ALLY", r._2)
+	else
+	 r
+	}).
+	groupBy(r => r._1) .
+	map(r=> (r._1, r._2.map(_._2).sum))
+}
+
+val dataWith3Way = dataPerConstituency.map(rec => (rec._1, recalculateWithAlliance(rec._2))
+
+dataWith3Way.map(rec => (rec._1, rec._2.toList.sortBy(k => -k._2))).map(rec => ((rec._1._1, rec._2(0)._1),1)).countByKey()
+
+1.31 min's -- try crating list and process it to find who won
+
+Discuss.itversity - Exercise 09 - Scala and Spark - political analysis for the state of UP -
+
+
+val s = "Hello World"
+
+s.equalsIgnoreCase("hello world")
+
+Video 11: Denrank, topNPriced products ; certification HDPCD explanation
+------------------------------------------------------------------------
+sorting globly and Bykey
+
+prod_id - 685 --issue with the records
+
+val products = sc.textFile("/user/cloudera/products")
+products.filter(rec => rec.split(",")(0).toInt == 685).collect().foreach(println)
+//we have a "," as data in the 2nd element
+//go have knowledge of Regx -helps in development
+
+val productsFiltered = products.filter(rec => rec.split(",")(4) != "")
+productsFiltered.map(_.split(",")(4).toFloat).first()
+productsFiltered.map(_.split(",")(4).toFloat).top(1) //performance will be low if we use top - since it has to convert every thing to array and sorted; better to use sortByKey and take() ; only paramters passed to take() will be convered in to array
+productsFiltered.map(rec => (rec.split(",")(4).toFloat, rec)).sortByKey(false).take(5).foreach(println)
+productsFiltered.map(rec => (rec.split(",")(4).toFloat, rec)).sortByKey(false).
+	map(_._2).take(5).foreach(println)
+
+productsFiltered.map(rec => (rec.split(",")(4).toFloat, rec)).sortByKey(false).
+ map(rec => rec._1 + "\t" + rec._2).take(5).foreach(println)
+
+map(rec => rec._1 + "\t" + rec._2).take(5).foreach(println)
+
+productsFiltered.takeOrdered(5).foreach(println)
+
+productsFiltered.takeOrdered(5)(Ordering[Double].on(x =>x.split(",")(4).toDouble)).foreach(println)
+productsFiltered.takeOrdered(5)(Ordering[Double].on(x => -x.split(",")(4).toDouble)).foreach(println)
+
+productsFiltered.map(rec => {
+	val r = rec.split(",")
+	((r(1).toInt, r(4).toDouble),rec)
+	}).sortByKey(false).collect().foreach(println)
+
+
+
+val products = sc.textFile("/user/cloudera/products")
+val productsFiltered = products.filter(rec => rec.split(",")(4) != "")
+val categories = sc.textFile("/public/retail_db/categories").
+	map(rec => (rec.split(",")(0).toInt), rec.split(",")(2)))
+val productsMap = productsFiletered.map(rec => (rec.split(",")(1).toInt, rec))
+productsMap.take(5).foreach(println)
+val productsJoin = productsMap.join(categories)
+productsJoin.first()
+
+val productsJoin = productsMap.join(categories).map(rec => (rec._2._2, rec._2._1))
+val productsGroupByCategory = productsJoin.groupByKey()
+productsGroupByCategory.foreach(println)
+
+56mins trick to play with little string instead of huge data set
+----------------------------------------------------
+
+def topNProducts(rec : (String, Iterable[String]), topN: Int): Iterable[(String,String] = {
+ rec.toList.soryBy(K => -k.split(",")(4).toFloat).take(topn).map(r=> (rec._1, r))
+}
+
+productsGroupByCategory.flatMap(rec => topNproducts(rec, 3))).collect().foreach(println)
+
+dgadiraju/scala-spark-topNProducts.scala --download; it is also given under Youtube video
+
+
+
+
+
+
+-------------
+val products = sc.textFile("/user/retail_db/products")
+val productsFiletered = procducts.filter(rec => rec.split(",')(4) != "")
+val productsMap = productsFiletered.map(rec => (rec.split(",")(1),rec))
+
+val categories = sc.textFile("/public/retail_db/categories").
+ map(rec => (rec.split(",")(0).toInt, rec.split(",")(2)))
+
+val productsJoin = productsMap.
+	join(categories).
+	map(rec=> (rec._2._2, rec._2._1))
+val productsGroupByCategory = productsJoin.groupByKey()
+productsGroupByCategory.
+ flatMap(rec => topNProducts(rec,3))).
+
+
+----------------------------------------
+DenRank 1.34 mins
+-------------------------------------
+
+val l = 
+
+l._2.toList.map(rec =>)
+
+
+denRank program--
+scala-spark-topNPricedproducts.scala
+
+dgadiraju/scala-spark-topNPricedProducts.scala --to download program
+
+
+discourse itversity - Exercise 06 NYSE
+
+du -sh nyse ---to get the file size
+--------------
+
+1.56 mins
+
+explation of HDPCD: spark exam -2.03 mins
+-------------------------------------------
+
+
+video 12: RDD Persistence --file formats Sequence file, newAPIHadoop file formats -accumulator -into of Broadcast variables
+-------------------------
+ssh root@gw01.itversity.com
+sudo su - dgadiraju
+
+
+spark-shell --master yarn-client
+
+import org.apache.spark.storage.StorageLevel
+products.unpersist()
+products.persist(StorageLevel.MEMORY_AND_DISK)
+
+18 mins ambari access and check the config
+
+
+val products = sc.textFile("/user/retail_db/products")
+
+import org.apache.hadoop.io._
+products.map(rec =>(rec.split(",")(0).toInt, rec)).
+ saveAsSequenceFile("/user/madhnarajuj/products_sequence")
+//products.map(rec => (new IntWritable(rec.split(",")(0).toInt), new Text(rec))).
+// saveAsSequenceFile("/user/dgadiraju/products_sequence", classOf[IntWritable], classOf[Text])
+
+48 min's
+sc.sequenceFile("/user/madhnarajuj/products_sequence", classOf[IntWritable], classOf[String]).map(rec => rec.toString()).
+ collect().foreach(println)
+
+//classOf[IntWritable] --Key Type  
+//classOf[String] --Value Type
+
+file format supported
+-------------------------
+
+org.apache.hadoop.mapred --- mapred ---old api
+org.apache.hadoop.mapreduce --mapreduce --new API
+
+org.apache.hadoop .mapreduce.lib.output._
+
+sc.newAPIHadoopFile("/user/madhanrajuj/productSeq", classOf[SequenceFileinputFormat[IntWritable,Text]], classOf[IntWritable], classOf[Text]).map(rec => rec.toString()).collect().foreach(println)
+
+
+
+serialization - to maintain the state of the objects; beyond the JVM
+
+
+//writing as sequence file
+import org.apache.hadoop.io._
+val products =sc.textFile("/public/retail_db/products")
+products.map(rec => (NullWirtable.get(), rec)).
+saveAsSequenceFile("/user/madhnarajuj/products_seq")
+
+//reading Sequence files
+sc.sequenceFile("/user/madhanrajuj/products_seq", classOf[NullWritable], classOf[Text]).
+ map(rec => rec._2.toString()).
+ collect().
+ foreach(pritnln)
+
+//writing using saveAsNewAPIHadoopFile(approach for any hadoop new API file format)
+val products = sc.textFile("/public/retail_db/products")
+val productsMap = products.
+ map(rec =>(new IntWritable(rec.split(",")(0).toInt), new Text(rec)))
+
+import org.apache.hadoop.io._
+import org.apache.hadoop.mapreduce.lib.output._
+
+productsMap.
+ saveAsNewAPIHadoopFile("/user/madhnarajuj/products_seq", classOf[IntWritable], classOf[Text], classOf[SequenceFileOutputFormat[IntWritable, Text]])
+
+//reading using newAPIHadoopFile (approach for any hadoop new API file format)
+import org.apache.hadoop.mapreduce.lib.input._
+sc.newAPIHadoopFile("/user/madhnarajuj/products_seq",classOf[SequenceFileInputFormat[IntWritable, Text]], classOf[IntWritable], classOf[Text])
+
+sc.newAPIHadoopFile("/user/madhnarajuj/products_seq", classOf[SequenceFileInputFormat[IntWritable, Text]], classOf[IntWritable], classOf[Text]).map(rec =>rec.toString()).collect().foreach(println)
+
+1.27mins
+Copy code of "dgadiraju/scala-spark-file-formats.scala"
+
+Accumulators
+-----------------
+1.40 mins
+
+val acc = sc.accumulator(0, "products map") --1.50 mins
+ products.map(rec => {
+ acc +=1
+ (rec.split(",")(0).toInt, rec)	
+}).collect().foreach(println)
+
+acc
+1350 --o/p
+
+spark web console - spark job history server 1.53mins
+
+itversity explanation of Accumulators with issues
+www.itversity.com/topics/accumulators
+
+big data deepdive
+
+
+
+
+
+
+
+
+
+Video 13 : explanation of what is covered as part of second section
+Broadcast variables
+-----------------------------------------------------------------
+ssh root@gw01.itversity.com
+
+mysql -u retail_dba -h nn01.itversity.com -p
+password:
+
+
+Boardcast variables:
+-----------------------
+
+val inputBaseDir = "/public/retail_db"
+
+Shuffle phase --does 2 things 
+-grouping and partitioning --by key using hash and mode operation
+
+joining on the map side ; because joining data after shuffle phase is expensive; so we can use Broadcast variables
+
+will work only if one table has large data and other has small data
+
+18 mins; ***By reducing the shuffel process; performance of the query witll be better
+
+here we can broadcast the smaller table data; cache in memory; and use it with
+
+20 mins: Bigdata enginering and immersion --explanation of Broadcast variables
+-------------------------------------------------
+
+23 mins:
+broadcast variable:
+-------------------------
+programm -snippet
+
+val bv = sc.broadcast(ordersMap.collectAsMap()) //key value map is converted in to hashmap by collectAsMap() function.
+//sc.broadcast --makes sure that broadcast variable is broadcasted to all the executers.
+
+val ordersItemsMap = sc.
+ textFile(inputBaseDir + "/order_items").
+ map(rec => (bv.value.get(rec.split(",")(1).toInt).get, rec.split(",")(4).toDouble))
+
+orderItemsMap.reduceByKey((agg, value) => agg+value).collect().foreach(println)
+//orderItemsMap.reduceByKey(_ + _).collect().foreach(println)
+
+//note: if there is no matching id program will return error
+//note: works only with joining small and large table
+//Join is a reduce side join
+//Broadcast variables: --at times we need to pass(broadcast) some information to all the executors
+----------------------
+---------------------------------------------------------------------
+
+bv.value -- gets the hashmap
+bv.value.get(rec.split(",")(1).toInt) -- we are selecting hashmap
+m.get(2)
+o/p - some(world)
+bv.value.get(rec.split(",")(1).toInt).get --getting a value out of it
+m.get(2).get
+o/p -- world
+-------------------------------
+
+29 mins:
+-----------
+
+hashmap creation and accessing:
+----------------------------------------
+val m = Map(1->"hello", 2-> "world")
+m.get(1)
+o/p- some(hello)
+m.get(2)
+o/p - some(world)
+m.get(2).get
+o/p -- world
+
+
+57 mins explation of execution:  code going to executor
+
+
+1.03 mins
+
+DataFrame:
+--------------
+defining the structure to data; and use some API's to process data
+any data set we need to process using dataframes we use case classes
+
+case class
+-----------
+case class Orders(
+ order_id: Int,
+ order_data: String,
+ order_customer_id: Int,
+ order_status: String);
+
+by default above variables are immutable
+javap -P Orders
+javap -P Orders$ --to get the companian methods -- it will invock the constructor
+
+case class -- for each and every variable there a class variable and for each variable we have getter methods
+
+class Ords(order_id: Int,order_data: String, order_customer_id: Int,order_status: String)
+
+javap-P Ords -- will have 4 constructor args;
+
+//export JAVA_HOME=  1.12 mins
+
+
+val ordersDF = sc.textFile("/public/retail_db/orders").
+ map(rec=> {
+	 val r = rec.split(",")
+	 Orders(r(0).toInt, r(1), r(2).toInt, r(3))
+ }).toDF
+
+//Orders(r(0).toInt, r(1), r(2).toInt, r(3))
+// we are invoking the apply method of case class "Orders"
+//.toDF -- converting to data frames
+
+ordersDF.select("order_id")
+ordersDF.select("order_id").take(20).foreach(println)
+
+ordersDF.select("order_id", "order_data","order_customer_id","order_status").take(100).foreach(println)
+
+
+***using "case class" is good in longer run; code will be much readable; case class is special case of regular class
+
+Video 14: data frams hive and sql contexts
+--------------------------------------------
+data frames - nothing but crating a structure on existing data; and use sql on that data
+
+3.30 mins
+libraryDependencies +="org.apache.spark" % "spark-hive 2.10" % "1.6.2"
+
+sbt console
+
+create a case class
+
+case class Orders(
+ order_id: Int,
+ order_data: String,
+ order_customer_id: Int,
+ order_status: String);
+
+case class OrderItems(
+ order_item_id: Int,
+ order_Item_order_id: Int,
+ order_Item_product_id: Int,
+ order_Item_quantity: Int,
+ order_Item_subtotal: Double,
+ order_Item_product_price: Double);
+
+case class - is special type of class in scala
+
+
+:javap -P Orders
+8.30 mins explanation
+
+:javap -P Orders$ - companian object #it will have apply method
+
+val o = Orders(1, "10-12-2017", 1, "COMPLETE") -- it will invoke apply method internally
+
+
+RDD - in-memory distributed collection
+
+import org.apache.spark.{SparkConf, SparkContext}
+
+
+val conf = new SparkConf().setAppName("Data Frames").SetMaster("local")
+val sc = new SparkContext(conf)
+
+val orders = sc.textFile("/User/itversity/Research/data/retail_db/orders")
+orders.first()
+
+import org.apache.spark.sql.SQLContext  -for DF
+
+val sqlContext = new SQLContext(sc)
+
+import sqlContext.implicits._ - for DF
+val ordersDF = orders.map( rec => {
+	val r = rec.split(",")
+	Orders(r(0).toInt, r(1), r(2).toInt, r(3)) 
+}).toDF
+
+# if we won't say ".toDF" it will result in to RDD of result objects
+# toDF - converts in to data frams
+
+val orderItems = sc.textFiles("/user/itversity/Reseasch/data/retail_db/orderItems")
+val orderItemsDF = orderItems.map(rec => {
+ val r = rec.split(",")
+ OrderItems(r(0).toInt,r(1).toInt,r(2).toInt,r(3).toInt,r(4).toDouble,r(5).toDouble)
+}).toDF
+
+ordersDF.printSchema() --to see the schema
+ordersDF.show() -- will give the sample data it will give 20 rows
+
+ordersDF.registerTempTable("orders") --to create temp table
+
+sqlContext.sql("select * from orders limit 10").collect().foreach(println)
+
+ordersDF.select("order_id", "order_date").show()
+
+DF - Filter method
+ordersDF.filter(ordersDF("order_status") === "COMPLETE").show()
+
+ordersDF.filter(ordersDF("order_status") === "COMPLETE" or ordersDF("order_status") === "CLOSED").show()
+
+
+
+val ordersFiletered = ordersDF.filter(ordersDF("order_status") === "COMPLETE" or ordersDF("order_status") === "CLOSED")
+val ordersJoin = ordersFiltered.join(orderItemsDF, ordersFiltered("order_id") === orderItemsDF("order_item_order_id"))
+
+orderJoin.printSchema
+
+import org.apache.spark.sql.functions._
+ordersJoin.groupBy("order_date").
+ agg(sum("order_item_subtotal")).
+ show()
+
+--- queries on data frame will fork 200 tasks;
+
+sqlContext.getConf("spark.sql.shuffle.partitions") -- to the no. of taks
+sqlContext.setConf("spark.sql.shuffle.partitions", "2")
+
+//data frame - not importent for work but we may get question on it exams
+//data frame operations , spark sql and hivecontext
+
+39 minst - writing program in IntelliJ IDE
+--------------------------------------------
+
+to write a log query we can use "s" before sqlContext.sql(s"select * from orders")
+or sqlContext.sql("select * from orders" +
+ " limit 10")
+
+orderItemsDF.registerTempTable("order_items")
+
+sqlContext.sql(s"select order_data, sum(order_item_subtotal)daily_revenue from orders" +
+ "join order_items on order_id = order_item_order_id " + 
+  "where order_status in ("COMPLETE", "CLOSED") " +
+  "group by order_data")
+
+-----------------------------
+should write a program
+
+intelliJ
+
+-first define a dependencies
+-create a case class
+-apply map 
+
+dependencies
+---------------
+
+libraryDependencies +="org.apache.spark" % "spark-core 2.10" % "1.6.2"
+libraryDependencies +="org.apache.spark" % "spark-sql 2.10" % "1.6.2"
+libraryDependencies +="org.apache.spark" % "spark-hive 2.10" % "1.6.2"
+
+
+case class Orders(
+ order_id: Int,
+ order_data: String,
+ order_customer_id: Int,
+ order_status: String);
+
+case class OrderItems(
+ order_item_id: Int,
+ order_Item_order_id: Int,
+ order_Item_product_id: Int,
+ order_Item_quantity: Int,
+ order_Item_subtotal: Double,
+ order_Item_product_price: Double);
+
+import org.apache.spark.{SparkConf, SparkContext}
+
+
+val conf = new SparkConf().setAppName("Data Frames").SetMaster("local")
+val sc = new SparkContext(conf)
+
+val orders = sc.textFile("/User/itversity/Research/data/retail_db/orders")
+orders.first()
+
+import org.apache.spark.sql.SQLContext  -for DF
+
+val sqlContext = new SQLContext(sc)
+
+import sqlContext.implicits._ - for DF
+val ordersDF = orders.map( rec => {
+	val r = rec.split(",")
+	Orders(r(0).toInt, r(1), r(2).toInt, r(3)) 
+}).toDF
+
+val orderItems = sc.textFiles("/user/itversity/Reseasch/data/retail_db/orderItems")
+
+val orderItemsDF = orderItems.map(rec => {
+ val r = rec.split(",")
+ OrderItems(r(0).toInt,r(1).toInt,r(2).toInt,r(3).toInt,r(4).toDouble,r(5).toDouble)
+}).toDF
+
+
+ordersDF.registerTempTable("orders")
+
+Hive Metastore:
+-------------------
+is a data base which stores meta data for you data
+
+for structured data we can use Data frame;
+
+set hive.metastore.warehouse.dir;  -- hive dir
+
+dfs -ls /apps/hive/warehouse/madhanrajuj;
+use madhanrajuj
+
+set hive.cli.print.current.db=true; --we can see which db we are connected to
+
+create table sparksqldemo(i int,s string);
+
+create database sparksqldemo;
+use sparksqldemo;
+
+hive>
+create table orders(
+ order_id int,
+ order_date string,
+ order_customer_id int,
+ order_status string)
+ row format delimited 
+ fields terminated by ','
+ stored as textfile;
+
+#hive tables are loosly cupled
+
+describe formatted orders; # to get entire metadata info
+
+load data local inpath '/data/retail_db/orders' into table orders
+
+select * from orders limit 10;
+
+drop table orders;
+
+
+ssh root@gw01.itversity.com
+
+spark-shell -master yarn --conf spark.ui.port=25632
+
+hive context extends sqlContext
+
+import org.apache.spark.sql.hive.HiveContext
+val hiveContext = new HiveContext(sc)
+
+import org.apache.spark.sql.SQLContext
+
+val sqlc = new SQLContext(sc)
+sqlContext.sql("use sparksqldemo")
+sqlContext.sql("use sparksqldemo")
+sqlContext.sql("show tables").show
+sqlContext.sql("describe formatted orders").collect().foreach(println)
+sqlContext --make sure it is of hivecontext; so that we can run hive queries directly
+
+sqlContext.sql("select * from sparksqldemo.orders limit 10").show()
+sqlContext.sql("select order_status, count(1) count_byStatus from orders group by order_status").show()
+sqlContext.setConf("spark.sql.shuffel.partitions", 2.toString) --to set taks to 2 instead of 200 tasks
+
+windowing functions: analytic  
+
+hiveql connector; spark connector - sql mode
+
+Exec;
+create data base 
+-order
+
+
+video 15: streaming analytics ---Flume
+------------------------------
+1 min's
+Streaming analitics --happening area
+---linkedin endorsement
+
+Data modeling
+- Thin table - only few fields it will have in the table
+
+- NoSql database --is used by linkedin for Endorsement
+
+Use Case Amazon:
+------------------
+it is not a good idea to keep all visitor info in db; it may effect other module operation; 
+hence we can have this log info in application server/web servers
+
+--there are technology which can poll this logs and capture the data and ship it to downstream applications
+---one such technology is flume
+
+
+flume - to read the data which is beeing writed in to log server/ file and pass it to downstream application
+Kafka - to channelize data to multipal targets (ex: HDFS and Spark streaming application)
+
+streaming technology
+--------------------
+strom
+flink
+spark
+
+to integrate flume and spark there is a technology called kafka(when we read a data we will channalize it into multipal targets (like Master data we can have one copy in HDFS and other channel going to spark))
+flume - capture data from the logs
+kafka - to build the queue; distributed ;so that it is reliable(highly reliable)
+spark - process the data in real time/ real neartime(to perform analitics)
+
+kafka - is a tool where x no. of application can publish data to queue and y no. of application can consume data from queue
+
+ssh root@gw01.itversity.com
+
+gw01> cd flume_example/
+
+kandf.conf
+
+cat kandf.conf
+
+>flume-ng agent -n kandf -c . -f kandf.conf
+
+ssh dgadiraju@gw01.itversity.com
+gw01> cd /opt/gen_logs 
+ls -ltr
+
+tail_logs.sh
+stop_logs.sh
+start_logs.sh
+logs --log file
+
+
+
+
+19.30
+
+
+sudo su -madhanrajuj2
+cd flume_example
+
+3 pices
+flume - reading data from source and pushing it to sink(kafka)
+sink - kafka 
+
+kafka - will serve the purpose of read once and write n times(write in to all the targets)
+
+queue - intermediate data structure; which can be published by publishers and consumbed to any
+
+***Flume is an agent which will be running which will be using this conf file to know what is the source and what is the sink and puclishing it to kafka queue/kafka topic
+
+16 min's example: 
+---------------------
+28 mins - spark streaming example
+
+InputDStream - descreat / dynamic in memory collection
+RDD - is a static in memory collection
+
+----------------------------------------------------------
+
+42: min's
+----------------
+
+mkdir wlabs
+mv wlabs wlabs
+
+flume user guide --google
+
+
+flume-ng version
+
+flume defination - demon process which has atleast source, sink and channel
+----------------
+
+Flume Sources:
+---------------
+exec - source to get data - we can use linux command tail to get log from the end
+
+Netcat source(exploratery) --it will launch a web service and listens on the given port
+Sequence(exploratery)
+
+Flume Sink:
+-----------
+HDFS sink
+
+Channel:
+-----------
+Memory
+JDBC
+Kafka
+File
+
+mkdir sa
+
+vi
+
+#example.conf: a single-node fulem configuration
+
+#name the copondents on this agent
+
+a1.sources  = r1
+a1.sinks = k1
+a1.channels = c1
+
+#describe/configure the source
+a1.sources.r1.type = netcat
+a1.sources.r1.bind = gw01.itversity.com
+a1.sources.r1.port = 44444
+
+#describe the sink 
+a1.sinks.k1.type = logger
+
+#use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+
+#Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+
+:wq
+
+
+flume-ng agent --name a1 \
+ --conf /home/madhanrajuj2/sa \
+ --conf-file example.conf
+
+
+nc gw01.itversity.com 44455
+hellow world,
+testing flume example agent
+agent is started, which have started web server on port 44444
+
+
+to replace in vi mode
+:%s/a1/fmp
+
+
+vi 
+
+
+#example.conf: a single-node fulem configuration
+
+#name the copondents on this agent
+
+fmp.sources  = logsource
+fmp.sinks = loggersink hdfssink
+fmp.channels = loggerchannel hdfschannel
+
+#describe/configure the source
+fmp.sources.logsource.type = exec
+fmp.sources.logsource.command = tail -F /opt/gen_logs/logs/access.log
+
+#describe the logger sink
+fmp.sinks.loggersink.type = logger
+
+#describe the HDFS sink
+fmp.sinks.hdfssink.type = hdfs
+fmp.sinks.hdfssink.hdfs.path = hdfs://nn01.itversity.com:8020/user/madhanrajuj/wlabssa/flume
+
+
+#use a channel which buffers events in memory for loggersink
+fmp.channels.loggerchannel.type = memory
+fmp.channels.loggerchannel.capacity = 1000
+fmp.channels.loggerchannel.transactionCapacity = 100
+
+#use a channel which buffers events in file for hdfssink
+fmp.channels.hdfschannel.type = file
+fmp.channels.hdfschannel.capacity = 1000
+fmp.channels.hdfschannel.transactionCapacity = 100
+
+#Bind the source and sink to the channel
+fmp.sources.logsource.channels = hdfschannel loggerchannel
+fmp.sinks.loggersink.channel = loggerchannel
+fmp.sinks.hdfssink.channel = hdfschannel
+
+
+flume-ng agent --name fmp \
+ --conf /home/madhanrajuj/wlabssa \
+ --conf-file fmp.conf
+
+
+***we can have multipal agent in configuration file and start what ever required from the command
+
+flume-ng agent --name fmp \
+ --conf /home/dgadiraju/wlabssa \
+ --conf-file fmp.conf
+
+
+//explore -- 
+1.28 min's//roll-interval, rollSize, rollCount *** important for hdfs sink -- which ever reaches first it will executed
+//hdfs-filePrefix
+//hdfs-fileSuffix
+//hdfs-fileType -- default sequence file; we can use datastream parameter
+
+Understand hdfs --- sink parameters as mentioned above and "hdfs.useLocalTimeStamp"
+
+
+//fileType = DataStream # to write in to text file
+
+gdadiraju/flume-logger-hdfs.conf # to get conf file
+
+Video 16: Kafka
+---------------
+
+Flume conf with hdfs sink with rollinterval
+----------------------------------------------
+https://github.com/bbastola/BigData/blob/6900ca31dcba9c0b7f86d2af621df0edc319fc54/Flume/flume-logger-hdfs
+
+Importent HDFS parameters:
+-------------------------------
+#Describe the sink
+a1.sinks.hdfssink.type = hdfs
+a1.sinks.hdfssink.hdfs.path = hdfs://nn01.itversity.com:8020/user/bbastola/flume_example_%Y-%m-%d
+a1.sinks.hdfssink.hdfs.fileType = DataStream
+a1.sinks.hdfssink.hdfs.rollInterval = 120
+a1.sinks.hdfssink.hdfs.rollSize = 10485760
+a1.sinks.hdfssink.hdfs.rollCount = 30
+a1.sinks.hdfssink.hdfs.filePrefix = retail
+a1.sinks.hdfssink.hdfs.fileSuffix = .txt
+a1.sinks.hdfssink.hdfs.inUseSuffix = .tmp
+a1.sinks.hdfssink.hdfs.useLocalTimeStamp = true
+
+
+
+3 min's
+gdadiraju/flume-logger-hdfs.conf # to get conf file
+
+Kafka:
+----------
+challenges in flume: 9 Min's
+----------------------
+muliplex the data - we need to create muliple channels and all channels utilize the resources
+
+where as in case of kafka - it will create a one queue push data to queue and as many subscribes as required can utilize it
+
+kafka.apache.org --doc's 11 min's
+--------------------
+3 main components:
+-------------------
+publish & Subscribe - publish the data; muliple subscribes can subscribe the data
+process - stream the data
+store - persist the data in DB or some where else
+
+Kafka has four core API's
+------------------------------
+Producer API
+Consumer API
+Streams API
+Connector API
+
+Topics and logs --Topics which is nothing but queue.
+
+Advantages of Kafka:
+---------------------
+-Distributed
+-Reliable --uses replication
+
+Topic -- can have multipal partitions; each partitions can be a file; file will be saved for 2 days; and if required it can be reused
+
+
+we need ZooKeeper for Kafka:
+----------------------------
+coordinater processer which makes sure the service is up and running all the time, which helps in fail over; load balance; high availability; it uses colam algorithem
+
+gw01.itversity.com:8080  --Ambari
+
+
+
+Quick start: from docs:
+-----------------------
+cat ~/.bash_profile
+
+23 mins:
+export KAFKA_HOME=/usr/hdp/2.5.0.0-1245/kafka
+PATH=$PATH:$KAFKA_HOME/bin
+
+
+
+to list the topics created:
+---------------------------
+kafka-topics.sh --list --zookeeper nn01.itversity.com:2181
+
+
+gist.githum.com/dgadiraju
+dgadiraju/kafka-getting-started-on-itversity-labs.sh
+
+just to check whether kafka is working or/not try below 3 steps:
+-----------------------------------------
+Topic is queue which can accept the messages and pass the messages to the subscribers
+
+1. command to start topic:
+
+/usr/hdp/2.5.0.0-1245/kafka/bin/kafka-topics.sh --create \
+--zookeeper nn01.itversity.com:2181,nn02.itversity.com:2181,rm01.itversity.com \
+--replication-factor 1 \
+--partitions 1 \
+--topic kafkama123
+
+
+
+2. //supply the text message
+
+kafka-console-producer.sh \
+ --broker-list nn02.itversity.com:6667 \
+ --topic kafkama123
+
+after above command give the messages to send to topic
+
+#broker --is the one which will manage the topics
+
+logs--- data will be kept in the server which is configured on Kafka 
+
+ls -ltr /*/kafka-logs|grep kafakama12
+
+
+ls -ltr /*/kafka-logs/kafkama12*
+
+3. //to get the log 
+working
+----------------
+kafka-console-consumer.sh \
+ --zookeeper nn01.itversity.com:2181,nn02.itversity.com:2181,nm01.itversity.com \
+ --topic kafkama123 \
+ --from-beginning
+
+
+not working
+----------------
+kafka-console-consumer.sh \
+ --bootstrap-server nn02.itversity.com:6667 \
+ --zookeeper nn01.itversity.com:2181,nn02.itversity.com:2181,nm01.itversity.com \
+ --topic kafkama123 \
+ --from-beginning
+
+**kafka -- sits in the middle and helps producers to push the data to queue and consumer to get the data from the queue
+
+kafka can be used as source,channel,sink
+
+kafka mastly it will be used as a sink to the flume
+
+
+
+51.20 mins
+---------------
+last class flume example integrated with Kafka
+
+flume userguide 1.6.0
+
+
+# flume-logger-hdfs.conf: Read data from logs and write it to both logger and hdfs
+# flume command to start the agent - flume-ng agent --name a1 --conf /home/bbastola/flume --conf-file example.conf
+
+# Name the components on this agent
+fks.sources = logsource
+fks.sinks = kafkasink hdfssink
+fks.channels = kafkachannel hdfschannel
+
+# Describe/configure the source
+fks.sources.logsource.type = exec
+fks.sources.logsource.command = tail -F /opt/gen_logs/logs/access.log
+
+# Describe the sink
+fks.sinks.kafkasink.type = org.apache.flume.sink.kafka.KafkaSink
+fks.sinks.kafkasink.brokerList = nn02.itversity.com:6667
+fks.sinks.kafkasink.topic = kafkama
+
+# Use a channel which buffers events in memory
+fks.channels.kafkachannel.type = memory
+fks.channels.kafkachannel.capacity = 1000
+fks.channels.kafkachannel.transactionCapacity = 100
+
+
+
+# Bind the source and sink to the channel
+fks.sources.logsource.channels = kafkachannel hdfschannel
+fks.sinks.kafkasink.channel = kafkachannel
+
+#Describe the sink
+fks.sinks.hdfssink.type = hdfs
+fks.sinks.hdfssink.hdfs.path = hdfs://nn01.itversity.com:8020/user/madhanrajuj2/sa/flume_example_%Y-%m-%d
+fks.sinks.hdfssink.hdfs.fileType = DataStream
+fks.sinks.hdfssink.hdfs.rollInterval = 120
+fks.sinks.hdfssink.hdfs.rollSize = 10485760
+fks.sinks.hdfssink.hdfs.rollCount = 30
+fks.sinks.hdfssink.hdfs.filePrefix = retail
+fks.sinks.hdfssink.hdfs.fileSuffix = .txt
+fks.sinks.hdfssink.hdfs.inUseSuffix = .tmp
+fks.sinks.hdfssink.hdfs.useLocalTimeStamp = true
+
+#Use a channel which buffers events in file for HDFS sink
+fks.channels.hdfschannel.type = file
+fks.channels.hdfschannel.capacity = 1000
+fks.channels.hdfschannel.transactionCapacity = 100
+fks.channels.hdfschannel.checkpointInterval = 300
+
+fks.sinks.hdfssink.channel = hdfschannel
+
+
+flume-ng agent --name a1 --conf /home/madhnarajuj2/sa --conf-file ex6.conf
+flume-ng agent --name fks --conf /home/madhnarajuj2/sa --conf-file fkf.conf
+
+
+
+we should make sure that kafa is integrated with flume(under Hartnworks distribution)
+cd /usr/hdp/2.5.0.0-1245/flume/lib
+ls -lrt /usr/hdp/2.5.0.0-1245/flume/lib | grep kafka
+
+--we should have following jar's to extend the flume
+-flume-kafka-source-xxxxx
+-flume-ng-kafka-sink-xxxxx
+-flume-kafka-channel-xxxx
+
+1.06 min's
+to check/validate is importent to see whether data is writen into kafka sink using below command as we will be not having access to node where kafka is running to check for the log where data is written:
+-----------------------------------------------------------------------------
+kafka-console-consumer.sh \
+ --bootstrap-server nn02.itversity.com:6667 \
+ --zookeeper nn01.itversity.com:2181,nn02.itversity.com:2181,rm01.itversity.com:2181 \
+ --topic wlkafkadg \
+ --from-beginning
+
+kafka-console-consumer.sh \
+ --bootstrap-server nn02.itversity.com:6667 \
+ --zookeeper nn01.itversity.com:2181,nn02.itversity.com:2181,rm01.itversity.com:2181 \
+ --topic kafkajaya \
+ --from-beginning
+
+
+
+Working-labs -ex7.conf-
+=====================
+flume1.sources  = r1
+flume1.sinks = hdfssink kafkasink
+flume1.channels = hdfschannel kafkachannel
+
+flume1.sources.r1.type = exec
+flume1.sources.r1.command = tail -F /opt/gen_logs/logs/access.log
+
+# Describe the kafkasink
+flume1.sinks.kafkasink.type = org.apache.flume.sink.kafka.KafkaSink
+flume1.sinks.kafkasink.brokerList = nn02.itversity.com:6667
+flume1.sinks.kafkasink.topic = kafkajaya
+
+
+flume1.sinks.hdfssink.type = hdfs
+# Customizing sink for hdfs
+flume1.sinks.hdfssink.hdfs.path = /user/madhanrajuj2/sa/flume_example_%Y-%m-%d
+flume1.sinks.hdfssink.hdfs.filePrefix = netcat2
+flume1.sinks.hdfssink.hdfs.fileType = DataStream
+flume1.sinks.hdfssink.hdfs.rollInterval = 120
+flume1.sinks.hdfssink.hdfs.rollSize = 10485760
+flume1.sinks.hdfssink.hdfs.rollCount = 30
+flume1.sinks.hdfssink.hdfs.filePrefix = retail
+flume1.sinks.hdfssink.hdfs.fileSuffix = .txt
+flume1.sinks.hdfssink.hdfs.inUseSuffix = .tmp
+flume1.sinks.hdfssink.hdfs.useLocalTimeStamp = true
+
+#use a channel which buffers events in memory
+flume1.channels.kafkachannel.type = memory
+flume1.channels.kafkachannel.capacity = 1000
+flume1.channels.kafkachannel.transactionCapacity = 100
+
+#use a channel which buffers events in memory
+flume1.channels.hdfschannel.type = file
+flume1.channels.hdfschannel.capacity = 1000
+flume1.channels.hdfschannel.transactionCapacity = 100
+
+#Bind the source and sink to the channel
+flume1.sources.r1.channels = hdfschannel kafkachannel
+flume1.sinks.hdfssink.channel = hdfschannel
+flume1.sinks.kafkasink.channel = kafkachannel
+
+
+Execute:
+-------------------------------
+flume-ng agent --name flume1 --conf /home/madhnarajuj2/sa --conf-file ex7.conf
+
+in another window
+--------------------
+kafka-console-consumer.sh  --bootstrap-server nn02.itversity.com:6667  --zookeeper nn01.itversity.com:2181,nn02.itversity.com:2181,rm01.itversity.com:2181  --topic kafkajaya  --from-beginning
+
+
+**Best way to know whether Kafka is working or not is by executing :
+Step:
+-------
+1.kafka-topics.sh
+2.kafka-console-producer.sh
+3.kafka-console-consumer.sh
+
+if the above steps are working and not working with my flume then it is a problem with .conf file which i have writen(check it properly)
+
+Note: if i am getting broker not found error then i am using incorrect broker name/port
+
+
+
+
+
+1.42 min's -- spark streaming
+---------------------------------
+google - spark programming guide 1.6.2 -> overview
+
+spark streaming guide -
+
+
+Video 17: spark program for streaming
+--------------
+spark-sheel --master yarn-client --conf spark.ui.port=23123
+
+spark-sheel --master yarn-client --conf spark.ui.port=45213
+
+--on spark-shell--we need to stop spark context to start streaming context
+
+sc.stop
+sc.stop() --we need to stop streaming context
+
+import org.apache.spark.SparkConf
+import org.apache.spark.streaming.StreamingContext
+
+
+val conf = new SparkConf().setAppName("Spark Streaming")
+val ssc = new StreamingContext(conf, org.apache.spark.streaming.Seconds(60))
+val lines= ssc.socketTextStream("gw01.itversity.com", 44444)
+
+
+//rdd is static; Dstream is a collection which can stream data in to it dynamicaly
+Dstream - discreat set of collection
+
+
+lines.print
+
+---------------------
+open another console and login to gateway node
+ssh root@gw01.itversity.com
+
+sudo su - dgadiraju
+nc -lk 44444
+
+#before typing any thing execute following command in above window
+ssc.start()
+
+
+hello world
+this is to get started with streaming using spark
+let us wait for ~60 seconds and see the messages printed
+streaming job which is just started
+------------------
+
+ssc.start() --to get the log
+
+
+----
+restart:
+
+sc.stop
+:history -- to get what we have executed
+
+copy above program executed:
+
+lines.flatMap(rec => rec.split(" ")).
+ map((_,1)).
+ reduceByKey(_+_).
+ print()
+
+ssc.start()
+
+#execute the above block in another console
+
+if we are running it in spark shell, we need to give path of jar files are else it wil report an error
+
+
+
+20 mins -- intellij program -- demonstrating above script
+-------------------------------------------------
+go to base dir //project dir
+
+cd IdeaProjects/retail/
+
+sbt package //it generate a jar file
+
+scp target/scala-2.10/retail_2.10-1.0.jar dgadiraju@gw01.itversity.com:~ # to copy the jar to cluster
+password:
+
+ssh root@gw01.itversity.com
+pw:
+
+spark-submit --class SparkStreamingWordCount --master yarn --conf spark.ui.port=14562 retail_2.10-1.0.jar //invocking the program
+
+SparkStreamingWordCount.scala----sir program
+
+--get the program link under youtube discription ----
+
+https://gist.github.com/dgadira
+
+nc -lk 19999
+**wirte the text**********
+
+
+
+/SparkStreaming
+
+
+
+2 types of API'S
+-----------------
+
+
+Window Operations----------this is with respect to streaming
+--------------------
+
+kafka - if we have integrated spark streaming with offset feature of kafka we can recover failures; if some executer fails
+
+40 min's
+Spark Streaming + Flume Integratio Guide
+------------------------------------------
+integrating flume with spark:
+--------------------------------
+search for "flume + 1.6.2"
+
+Avro Sink - spark can fetch data from avro sink
+
+3rd party plugin -SparkSink
+
+cd /usr/hdp/2.5.0.0-1245
+
+
+1.05 min's
+-------------
+integrating flume, kafka with spark streaming
+
+1.19 -- complete lifecycle
+
+to explore more on kafka we should know "custome streaming" api's
+
+shuffle partions : to get output in one file
+---------------------------------------------
+[numTasks]
+
+reduceByKey(function, [numTasks]) //if we need output in one file we need to mention [numTask] as 1
+
+data lake - which we will use it as data source back up to cross check whether analytics which we have run is currect or not
+
+
+--need to work on 9 an 10 video
+
+
+--------------------------------------------------------------
+Video 62: Oozie
+---------------
+25mins
+
+Oozie - is a workflow tool; and a scheduler tool
+executing series of application in controled manner
+Execution engine - map reduce
+
+Action: represent the component 
+
+Utility node: where we run the oozie and Hive applications
+here gateway node will communicate through utility node.
+
+Azkaban- Kafka used in linkedin- Azkaban linkedin products(Oozie is heavy)
+Airflow
+
+ssh root@gw01.itversity.com
+
+sudo su - dgadiraju
+mkdir oozie_demo
+cd oozie_demo
+find /usr/hdp/2.5.0.0-1245/oozie -name "*examples*"
+cp /usr/hdp/2.5.0.0-1245/oozie-examples.tar.gz .
+tar xzf oozie-examples.tar.gz
+ls -ltr
+cd examples
+ls -ltr
+src
+apps --
+
+cd apps
+cd java-main
+ls -ltr
+
+lib - will have compiled jar file - from were we need to invoke an application
+
+vi workflow.xml
+<start to="java-node"/>
+
+#fs.defaultFS in core-site.xml - for name node
+#yarn.resourcemanager.address in yarn-site.xml for jobTracker
+
+
+to oozie workfollow execution:
+---------------------
+oozie job -oozie http://nn01.itversity.com:11000/oozie -conf /home/dgadiraju/oozie_demo/examples/apps/java-main/job.proerties -run
+
+oozie job -oozie http://nn01.itversity.com:11000/oozie -conf <oozie_job_id> -info # to get the details of job that is running
+
+1.16 : oozie with Hive:
+-----------------------
+
+1.44 - real world example
+---------------------------
+
+Video 63: Oozie workflow and HBase
+----------------------------------
+copying the JDBC driver to oozie lib
+info on driver update
+
+commands to invoke sqoop based commands to invoke the data
+
+running 2 jobs in parallel and join them
+
+it runns more mapreduce jobs hence industry is moving to words Azkaban sort of technology
+
+oozie user guide --google
+-------------------
+we can use <fork> to run jobs parallely
+<join> --not RDBMS join - if above fork command is succesfull it says to continue with join tags
+
+OOzie - to manage the workflow it creates muliple mapreduce jobs
+
+Big Data->WorkShop Exercises->exercise 30- 
+----------------------------------
+
+Big Data Certification workshop 036 - HBase and Ambary
+------------------------------------
+
+gist.github.com
+-------------------
+oozie-daily-revenu-workflow.xml -- search
+
+oozie-fork-join-workflow.xml -- save it as workflow.xml
+
+
+Updated with latest topics
+----------------------------------------------------------
+https://www.youtube.com/watch?v=D6l1102Z1nc&index=63&list=PLf0swTFhTI8q4pvjNTcjMPzCYPZIrpPAa
+
+HBase 1.0 hrs
+-----------
+real time operational usecase
+Ex: Facebook messenger
+
+--multipal Master in Hbase
+--3 master; we need to have coordinater tool it is using Zookeeper
+
+RegionServer - slave for HBase
+file system - HDFS - to store all the files
+data in memory will be copied to HDFS file system in regular interval in form of SS-Table(string sorted tables)
+SS-Table - Compaction - where smaller ssTable will be merged in to one large SSTable and the no. of too many small tables will be taken care
+
+Lab> hbase shell
+>help
+namespace
+dml
+
+>list
+> create_namespace 'dgadiraju';
+>list_namespace
+>list_namespace_tables 'default' --to list the tables
+>create 'dgadiraju:emp', 'ed'
+>list_namespace_table 'dgadiraju'
+
+--column family related columns
+insert,update or scan
+
+CRUD - C R U D operations in HBase
+
+dml:
+> put 'dgadiraju:emp', 1, 'ed:name','DG'
+> put 'dgadiraju:emp', 1, 'ed:addr','DFW'
+> put 'dgadiraju:emp', 1, 'ed:de[t','IT'
+
+C and U --taken care by "put" command
+
+> put 'dgadiraju:emp', 1, 'ed:dept','ITO'
+
+> scan 'dgadiraju:emp'
+
+> put 'dgadiraju:emp', 2, 'ed:name','Viswanath'
+> put 'dgadiraju:emp', 1, 'ed:dept','IT'
+> put 'dgadiraju:emp', 1, 'ed:title','founder'
+
+> put 'dgadiraju:emp', 0, 'ed:name','none'
+> put 'dgadiraju:emp', 0, 'ed:dept','na'
+
+> scan 'dgadiraju:emp'
+
+# feature of no SQL DB: sorted and distributed table
+# data is stored and sorted by row key; and with in each row each column sorted by column name 
+
+scan 'dgadiraju:emp'
+
+scan 'dgadiraju:emp', {COLUMNS => ['ed:name', 'ed:addr']}
+
+get 'dgadiraju:emp', 1
+
+create 'dgadiraju:endoresements', 'raw'
+
+alter 'dgadiraju:endoresements', 'agg'
+
+>disable 'dgadiraju:endoresements' -- to drop table
+>drop 'dgadiraju:endoresements'
+
+>create 'dgadiraju:endorsements', 'raw'
+>alter 'dgadiraju:endorsements', 'agg'
+
+-----------------------------------------------
+not correct way
+>put 'dgadiraju:endoresements', 1, 'raw:endorser', 2
+>put 'dgadiraju:endoresements', 1, 'raw:endorsed_tech', 'Apache Spark'
+
+>put 'dgadiraju:endoresements', 1, 'raw:endorsed_tech', 'Apache Spark, Hive, Oracle, Apache Sqoop, Hbase'
+
+truncate 'dgadiraju:endoresements' -- delete all records
+----------------------------------------------------------
+>put 'dgadiraju:endoresements', '1:2', 'raw:endorsed_tech', 'Apache Spark, Hive, Oracle, Apache Sqoop, Hbase'
+>put 'dgadiraju:endoresements', '1:3', 'raw:endorsed_tech', 'Apache Spark, Hive, Oracle'
+
+'1:2' - composit key -- using 2 unique key
+
+>scan 'dgadiraju:endoresements'
+
+>put 'dgadiraju:endoresements', '2:1', 'raw:endorsed_tech', 'java'
+>put 'dgadiraju:endoresements', '2:3', 'raw:endorsed_tech', 'Hadoop'
+
+>scan 'dgadiraju:endoresements'
+
+
+Video 64: HBase and Ambare
+-----------------------------
+hbase shell
+>list
+>help
+>list_namespace_tables 'dgadiraju'
+
+C - Insert (put command)
+R - Read or Query (scan & get)
+U - Update (put command)
+D - Delete (delete)
+
+scan 'degadirage:emp'
+
+scan 'degadirage:endorsements'
+
+******Good explanation of using of Echo system in real time
+12 Mins
+-----------
+use 
+1. Flume->kafka to get the data 
+2. Store raw data in NoSql db if required for reporting perpuse
+2. process data using from Kafka using spark streaming and update it to DB and use in real time APPlication
+
+3. we can use the stored raw data in NoSQl DB for reporting
+
+
+show_filters
+
+
+thick column family
+thin column family
+
+NOSQL DB not suitable:
+------------------
+back and recovery - difficult
+Transaction based system(bank) - not suitalbe
+
+Email Boxs, Endorsments, recommandation engine - good use cases
+---------------------------------------------------------------
+
+29 mins
+CRUD operation using Java :
+
+getting started using JAVA
+
+33.45 Mins : IntelliJ - writing a java program
+
+
+
+
+
+
+get 'dgadiraju:endoresements', '1:2'
+
+partial row key scan: to get the records for 1 key use perticula key
+---------------
+scan 'dgadiraju:endoresements', {START_ROW => '1:1', ENDROW => '1:9'}
+
+
+FLUME
+==========
+
+multiple sources and multiple channels and multple sinks in same host.
+-----------------------------------------------------
+
+https://community.cloudera.com/t5/Data-Ingestion-Integration/multiple-sources-of-flume-agent/td-p/31785
+
+
+Please see modified .conf:
+# example.conf: A single-node Flume configuration
+# Name the components on this agent
+a1.sources = r1 r2
+a1.sinks = k1 k2
+a1.channels = c1 c2
+# Describe/configure the source r1
+a1.sources.r1.type = exec
+a1.sources.r1.command = tail -F /home/hadoop/hadoop-2.7.1/logs/yarn-hadoop-resourcemanager-sri.test.com.log
+a1.sources.r1.channels = c1
+# Describe/configure the source r2
+a1.sources.r2.type = exec
+a1.sources.r2.command = tail -F /var/log/messages
+a1.sources.r2.channels = c2
+# Describe the sink
+a1.sinks.k1.type = logger
+a1.sinks.k2.type = logger
+# Use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+# Use a channel which buffers events in memory
+a1.channels.c2.type = memory
+a1.channels.c2.capacity = 1000
+a1.channels.c2.transactionCapacity = 100
+# Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sources.r2.channels = c2
+a1.sinks.k1.channel = c1
+a1.sinks.k2.channel = c2
+# Define a sink that outputs to hdfs dir.
+a1.sink.k1.type = hdfs
+a1.sink.k1.hdfs.path = /yarn
+a1.sink.k1.fileType = TEXT
+# Define a sink that outputs to hdfs dir.
+a1.sink.k2.type = hdfs
+a1.sink.k2.hdfs.path = /yarn/test
+a1.sink.k2.fileType = TEXT
+
+
+
+
+
+-------------------------------------
+working-------tested on itversity
+
+# name the components on this agent
+a1.sources = r1
+a1.sinks = k1
+a1.channels = c1
+#describe/configure the source
+a1.sources.r1.type = netcat
+a1.sources.r1.bind = gw01.itversity.com
+a1.sources.r1.port = 44444
+#describe the sink
+#a1.sinks.k1.type = logger
+a1.sinks.k1.type = hdfs
+# Customizing sink for hdfs
+a1.sinks.k1.hdfs.path = /user/madhanrajuj2/flume
+a1.sinks.k1.hdfs.filePrefix = netcat
+a1.sinks.k1.hdfs.fileType = DataStream
+#use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+#Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+
+
+hadoop fs -ls /user/madhanrajuj2/flume
+
+flume-ng agent -n a1 -c /home/madhanrajujaya/conf/ -f /home/madhanrajujaya/conf/example.conf
+
+telnet gw01.itversity.com 44444
+
+hadoop fs -ls /user/madhanrajujaya/flume
+
+hadoop fs -cat /user/madhanrajujaya/flume/netcat.1487057036136
+
+---------------------------------------
+Source - http ---working
+-ran flume on lab and sent data via my pc from linux
+command Used: curl -X POST -H 'Content-Type: application/json; charset=UTF-8' -d '[{"username":"xyz","password":"123"}]' http://gw01.itversity.com:44444/
+
+
+a1.sources  = r1
+a1.sinks = k1
+a1.channels = c1
+
+#describe/configure the source
+a1.sources.r1.type = org.apache.flume.source.http.HTTPSource
+a1.sources.r1.port = 44444
+a1.sources.r1.channels = c1
+
+
+#describe the sink 
+a1.sinks.k1.type = logger
+
+#use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+
+#Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+
+
+curl -X POST -H 'Content-Type: application/json; charset=UTF-8' -d '[{"username":"xyz","password":"123"}]' http://gw01.itversity.com:44444/
+
+--------------------------
+working example of Source: HTTP sink: logger and hdfs
+note: data is not writen to log file
+
+a1.sources  = r1
+a1.sinks = k1
+a1.channels = c1
+
+#describe/configure the source
+a1.sources.r1.type = org.apache.flume.source.http.HTTPSource
+a1.sources.r1.port = 44444
+a1.sources.r1.channels = c1
+
+
+#describe the sink 
+a1.sinks.k1.type = logger
+a1.sinks.k1.type = hdfs
+# Customizing sink for hdfs
+a1.sinks.k1.hdfs.path = /user/madhanrajuj2/flume
+a1.sinks.k1.hdfs.filePrefix = netcat
+a1.sinks.k1.hdfs.fileType = DataStream
+
+#use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+
+#Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+
+curl -X POST -H 'Content-Type: application/json; charset=UTF-8' -d '[{"username":"ram","password":"1235"}]' http://gw01.itversity.com:44444/
+
+
+
+---------------------------------------------------------
+working tested using netcat command 
+a1.sources.r1.bind = 0.0.0.0 should be 0.0.0.0
+log stored on hdfs: what ever entered on telnet (nc) console is captured on hdfs log
+
+flume executed on Lab; 
+nc gw01.itversity.com 44444 : executed on client and values sent
+
+a1.sources  = r1
+a1.sinks = k1
+a1.channels = c1
+
+#describe/configure the source
+a1.sources.r1.type = netcat
+a1.sources.r1.bind = 0.0.0.0
+a1.sources.r1.port = 44444
+
+#describe the sink 
+a1.sinks.k1.type = logger
+a1.sinks.k1.type = hdfs
+# Customizing sink for hdfs
+a1.sinks.k1.hdfs.path = /user/madhanrajuj2/flume
+a1.sinks.k1.hdfs.filePrefix = netcat2
+a1.sinks.k1.hdfs.fileType = DataStream
+
+#use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+
+#Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+--------------------------------------------------
+curl telnet://localhost:3000
+curl telnet://gw01.itversity.com:44444
+
+
+curl - is a libary for transfering data using URL syntax
+telnet - interface for communicating with URL
+netcat is computer network service for reading from and writing to net connection
+
+Oozie 
+--------------------
+--------------------
+Oozie is a workflow/coordination system that you can use to manage Apache hadoop jobs.
+--Oozie server - a web application that runs in a java servlet container (standard Oozie distribution is using tomcat)
+-This server supports reading and executing workflows, coordinatiors and bundles definitions.
+
+
+Example oozie -- 103 minits
+
+Oozie Functions components
+--------------------------
+Oozie workflow
+ --this component provides support for defining and executing a controlled sequence of MapReduce, Hive, and pig jobs.
+oozie coorinator(act like scheduler)
+ --provides support for the automatic execution of workflows bases on the time and data availability
+oozie Bundles(if we have more work flow/coorinator we cna bundle them)
+ --facilitates packaging multiple coordinator and workflow jobs, and makes it easier to manage the life cycle of those jobs.
+
+main features
+---execute and monitor workflows in hadoop
+--periodic scheduling of workflow
+--trigger execution by data availability
+--command line interface + web console
+
+1.. we need to write workflow.xml(HPDL --hadoop process definition language)
+2.. job.properties and lib
+
+http://www.infoworld.com/article/2683729/hadoop/10-ways-to-query-hadoop-with-sql.html
+
+OOzie:
+-----------------
+https://www.youtube.com/watch?v=865U--FHoro
+To understand in HUE and manually configuration
+
+Itversity - OOzie explanation
+-----------------------------
+Big Data Certifications Workshop 034 - Oozie Workflows
+https://www.youtube.com/watch?v=AipQjQTU9iY
+
+WorkFlow.xml - 
+job.properties - configuration file for our work flow
+
+
+https://www.youtube.com/watch?v=Y1Fvz9tgdA8 -- Cloudera quick start ---go through it
+
+
+
+https://www.youtube.com/watch?v=3bgtTk3V7mw
+---------------------------------------------
+a - O/p -> B -> O/p C  --oozie coordinates this job execution - hence it is called as workflow engine
+
+here we will have 2 nodes 
+1- Controll node - from where the jobs will be started
+2 - Action node - it will coordinate the job exection
+
+we will have only one controll node; but n no. of action nodes
+
+workflow.xml file - this will have will have all configuration about jobs
+
+<workflow-app>
+ <action>
+  job a
+ </action>
+ <action>
+  job b
+ </action>
+ <action>
+  job c
+ </action>
+</workflow-app>
+
+bootsstrap - service which is required to run oozie
+
+$sudo /etc/init.d/oozie start  ---this will start bootsstrap service
+
+
+Notes on Oozie
+
+https://www.youtube.com/watch?v=-4cuyCLim5Q
+
+
+Itversity 
+Apache Spark - Streaming using Twitter
+----------------------------------------
+https://www.youtube.com/watch?v=1GixYso8Az4
+
+
+Flume explanation --good one
+--------------------------------
+https://www.youtube.com/watch?v=PdY31i25SL0
+
+durga
+--------------
+https://www.udemy.com/data-analytics-using-hadoop-in-2-hours/
+https://www.udemy.com/data-analytics-using-hadoop-in-2-hours/learn/v4/t/lecture/1895468
+
+
+
+-----------------------------------------------
+Must read***************
+Designing Bigdata architecture ****************************
+
+https://www.saama.com/featured-blog/design-big-data-architecture-6-easy-steps-part-deux/
+
+Continue with reading
+------------------------
+
+http://www.networkworld.com/article/3075834/mobile-wireless/new-products-of-the-week-5-30-16.html#slide26
+
+https://www.saama.com/wp-content/uploads/2016/07/Saama_Real_World_Evidence_Case_Study.pdf
+
+https://www.saama.com/wp-content/uploads/2016/07/Saama_Analytics_Platform_for_Pharma_Case_Study.pdf
+
+To know about medical data:
+---------------------------
+http://www.mtsamples.com/site/pages/sitemap.asp
+
+in google search:
+---------------------------------
+oncology medical report sample
+
+to understand daily work to do on Hadoop
+--------------------------------------------
+http://forum.mappingminds.org/Thread-Typical-tasks-for-a-Hadoop-developer-on-a-daily-basis
+
+
+==============================================
+
+
+
+http://voormedia.com/blog/2014/06/four-ways-to-index-relational-data-in-elasticsearch
+------------------------------------------------------------------------------------
+
+Copying data to elasticsearch via sql server
+
+
+curl -XPUT localhost:9200/_river/product/_meta -d '
+  {
+    "type": "jdbc",
+    "jdbc": {
+      "url": "jdbc:sqlserver://db.example.com;databaseName=products",
+      "user": "user",
+      "password": "pass",
+      "sql": "SELECT * FROM products",
+      "index": "example",
+      "type": "product",
+      "schedule": "00 00 01 * * ?"
+    }
+  }'
+
+web log file location
+-----------------------------
+
+
+A typical location for all log files is /var/log and subdirectories. 
+Try /var/log/apache/access.log or  /var/log/apache2/access.log. 
+If the logs aren't there, try running locate access.log.
+
+setup of automatic log generater
+----------------------------------
+https://www.quora.com/Where-can-I-find-web-server-log-dataset
+
+dgadiraju/code/hadoop/edw/gen_logs
+git clone https://github.com/dgadiraju/code.git
+
+cd code/hadoop/edw/scripts
+gen_logs --is the script
+
+mv -f gen_logs /opt
+cd
+rm -rf code
+ls -ltr /opt
+ls -ltr /opt/gen_logs/
+view opt/gen_logs/start_logs.sh
+ln -s /opt/gen_logs/start_logs.sh /usr/bin/start_logs.sh
+ln -s /opt/en_logs/stop_logs.sh /usr/bin/stop_logs.sh
+ln -s /opt/en_logs/tail_logs.sh /usr/bin/tai_logs.sh
+pwd
+/root
+start_logs.sh --which will generate the https logs
+tail_logs.sh --to view the log generated
+//when ever we need to test flume/kafka we can use this
+stop_logs.sh # to stop the log generation
+
+to add a flume
+--go to cloudera manager
+ ---add a service //7 min's
+ --click on continue by selecting the flume
+
+
+Performance tuning of spark application:
+-----------------------------------------------
+http://discuss.itversity.com/t/cca175-question-on-spark-configuration/4081
+
+http://blog.cloudera.com/blog/2015/03/how-to-tune-your-apache-spark-jobs-part-2/
+https://spark.apache.org/docs/1.6.1/configuration.html
+
+*****Data Engineering Projects:******
+----------------------------------
+http://discuss.itversity.com/t/data-engineering-projects/4153
+
+--https://github.com/siyuan1992/coding-challenge --tweeter
+--https://github.com/dhananjaymehta/InsightDataEngineer-DigitalWallet
+
+1 -done
+2 -done
+3 -done
+
+13 -
+14 -
+
+
+18 -done
+19 -done
+20 -done
+
+
+Tr
+------------------
+madhanraju.j2@gmail.com	
+april@123
+username: J2Madhan
+
+Reading json data in spark scala
+--------------------------------------
+https://www.youtube.com/watch?v=AipQjQTU9iY
+
+Durga sir---------
+Big Data Certifications Workshop
+Video 1: latest sylabus
+https://www.youtube.com/watch?v=JmHrINJRTWE
+
+
+
+Do do 12-May
+-----------------
+OOzie on cloudera
+Apache Oozie - Quick start - Execute java main action
+https://www.youtube.com/watch?v=Y1Fvz9tgdA8 -- Cloudera quick start ---go through it
+
+Using HUE - with HIVE job - and scheduler
+https://www.youtube.com/watch?v=Tu1IM4rph6w
+
+Using HUE - with HIVE job
+https://www.youtube.com/watch?v=7lCaL2gZiXo
+
+
+
