@@ -210,3 +210,23 @@ HBase: HDFS+ Random read/write
 Each column manages Hashmap1 => ts:data
 Each Famaily manages Hashmap2 => column:hashmap1
 Each Row manages hashmap3 => Famaily: Hashmap2
+
+Video 8:
+(Table,RowKey,Family,Column,TimeStamp) -> Value
+
+loading table from Mysql to HBase using sqoop : 14.09
+-----------------------------------------------------
+
+Bulk load 26 min's
+
+42 min's -zookeeper
+
+HDFS
+======
+
+high Availability
+-------------------
+Active and Standby NameNode => zookeeper keeps matadata in sync
+
+Zookeeper => coordination of Demons => Api
+
