@@ -1,0 +1,212 @@
+def parse=(s: String)=> {
+val res = unix_time()
+
+40 mins
+
+NoSQL Databases and HBase
+---------------------------
+- HDFS does not give fast individual record lookup
+- NoSQL Common Problems
+ - Huge Data
+ - Fast Random Access
+ - Structured Data
+ - Variable Schema(Sparse data- lot of data may not be filled)
+ - Need of Compression
+ - Need of Distribution (Sharding - spliting table data adn distributing it accross diff machines)
+
+Characteristics of Problem solution
+--------------------------
+- Distributed DB
+- Sorted Data
+- Sparse Data Store(some fields may not be filled - thinly distributed)
+- Automatic Sharding
+
+
+user		Connection
+ID Name  sex  age  cid1  ctype1 Cid2  Ctype2	Cidn  Ctypen
+1  Ram    m   10   1     abc    2     djdk   ...n	djkd
+2  Kris   m   10   1     abd
+
+here in NoSql connection grow horizontally; RDBS connection grow vertically
+NoSql - data is denormalized; distributed DB; sort data and store them; capable of storing variable schema
+
+58 mins - different DB
+
+HBase - Big table Clones
+
+NoSQL - CAP Theorem
+- C - consistency - Commits are atomic across the entire DFS(railay ticket booking)
+- A - availability - Remains accessible and operate at all time
+- P - partition tolarence- if one or more system fails system should not go down data should be still available
+
+- here only 2 can be achieved for a distributed application
+
+68 mins - based on the use case we can use different DB
+
+Hbase - is non-relational db which stores data in Key-value pair; specifically it is:
+ - Sparse
+ - Distributed
+ - Multi-Dimensional - 
+ - Sored Map
+ - Consistent
+
+Hbase
+1. Table level schema defines column_family
+2. Column can be added on the fly
+3. Row_Key which is unique and identifies each row
+4. data is stored with timestamp for a Column(timestamp act as key)
+Key: TimeStamp
+Value: data
+5. we can manage multiple version of data(it stores 3 version of data based on timestamp)
+
+80 mins: Hbase and RDBms - difference
+Column  - Row oriented
+Flexible schema, add columns on the fly - Fixed schema
+Good with sparse tables - notoptimized for sparse tables
+joins using MR - not optimized - Optimized for joins
+Tight integration with MR - Not really
+Horizontal scalability- just add hardware - Hard to shard and scale
+good for semi-structured data as well as structured data - Good for structured data
+
+
+- Each row is identified by Row-Key - each row can be spanned acros mulipal familys
+-Column famaily - (Personal, Address)
+
+When to use HBase: 83.24 mins
+--------------------------------
+-Unstructured data
+-high scalability
+-Versioned data
+-Generating data from an MR work flow
+-Column-oriented data
+-High volume data to be stored
+
+When Not to use HBase:
+-----------------------
+-when you have only a few thousand/millio rows.
+-lacks RDBMS Commands
+-when you have hardware less than 5 data nobes when replication factor is 3.
+
+sudo jps
+start-hbase.sh - to start hbase
+PW:
+
+if up and running following process will be running:
+-----------------------------
+HMaster
+HRegionMessage
+
+hbase shell -- to go to HBase shell
+> list
+> create 'employee','personal' --table name 'employee'; famaily name "personal"
+> put 'employee', 'emp1','personal:ename','ram'
+--table name: emplyee
+--Row ID - emp1
+--column famaily with column - personal:ename 
+--column name- ename  
+--value - ram
+> put 'emplyee', 'emp1','personal:age','35'
+> put 'emplyee', 'emp1','personal:password','abcd'
+
+> scan 'emplyee' --to scan the table data
+
+> put 'employee', 'emp2','personal:ename','ram1'
+> put 'employee', 'emp2','personal:age','35'
+> put 'employee', 'emp2','personal:password','abcdde'
+> put 'employee','emp2','personal:gender','m'
+> put 'employee', 'emp2','personal:mobile','125346789'
+
+> scan 'employee'
+
+CRUD:
+> delete 'employee','emp1','personal:password'
+> scan 'employee'
+
+> put 'employee', 'emp2','personal:password','new_password'
+>scan 'employee'
+
+>disable 'employee' -- if disables the table for updates/if table is getting updated this command won't work
+
+>alter 'employee',NAME=>'address',VERSIONS=>3 --table altered with 'address' famaily and version is updated to 3 which stores 3 verssions of data
+
+>scan 'employee'
+
+>put 'employee','emp1','address:streat','5th cross'
+>put 'employee','emp','address:city','bangalore'
+>put 'employee','emp','address:state','karnataka'
+
+>scan 'employee'
+
+>put 'employee','emp','address:city','bangaluru' -value update
+
+>scan 'employee'
+
+> get 'employee', 'emp1' --to get the perticular row id
+> get 'employee', 'emp2'
+
+to fetch older versions of data
+> get 'employee', 'emp1',COLUMN=>'address:city',VERSIONS=>3
+to fetch on time stamp
+>get 'employee','emp1',COLUMN=>'address:city',TIMESTAMP=>14659699486
+
+to get latest version of data
+> get 'employee','emp1'
+
+
+***************************
+table rowid colfam col ts
+***************************
+ts - timestamp
+
+
+
+
+**hbase converts all the data in to bytes
+
+
+HBaseMaster - managing cluster servers
+HRegionServer - act as slave - which runs on all slave mechines 
+HBaseClient - interface b/w user and Hbase
+
+Data storage architecture in Hbase 127 Min's
+-----------------------------------------------
+Region - by default 256 MB
+Regions are row wise ordered data - which stores 256 MB of data
+
+table will be managed in multipal regions
+
+Regions => row key ordered data
+Region Server - which stores regions - which is capabal of storing n no. of regions
+
+RegionServers - run on Datanode - which stores data in HDFS
+
+
+HBase Components:
+---------------
+table made of regions
+region -  range of rows stored together
+Region servers- server one or more regions
+ - a region is served by only one region server
+Master server - daemon responsible for managing HBase cluster
+HBase stores its data into HDFS
+ - Relies on HDFS's High Availability and fault tolerance
+
+130.50 min's Hbase architecture
+------------------------------------
+
+------------------------------------------------
+MR - update and delete is not posible
+
+Hbase - we can do complete CRUD operations
+HBase: HDFS+ Random read/write
+
+-built on top of Hadoop file system
+-Stores key/value pairs in columnar fashion(columns are clubbed to gether as column families)
+-provides low latency access to small amount of data from whhin a large data set
+-Hbase is used when you have real-time needs
+------------------------------------------------
+
+
+Each column manages Hashmap1 => ts:data
+Each Famaily manages Hashmap2 => column:hashmap1
+Each Row manages hashmap3 => Famaily: Hashmap2
