@@ -101,6 +101,8 @@ TO submit spark job remotely - from local to Remote pc running Yarn
 -----------------------------------------------------------------------
 http://theckang.com/2015/remote-spark-jobs-on-yarn/
 
+Hive Index:(edureka video 7: 30 Mins)
+----------------------------------------
 
 To Read interview questions:
 ------------------------------
