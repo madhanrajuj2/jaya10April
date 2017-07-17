@@ -1,0 +1,243 @@
+https://www.youtube.com/watch?v=mUGvYgYX13U
+----------------------------------------------
+SCD types 1,2 and 3
+----------------------------
+
+Dimension
+-------------
+-Reference Data
+-it will have a key
+
+EmpID Ename Location Job Manager Hiredate DeptNo
+1234
+
+Fact --> Measureable Attributes stay in the fact table
+-------------------
+
+Data modeling 
+-----------------
+here we discus with the business and deside what attributes should go to Dimention(reference data) or Fact(measureable attributes)
+
+EmpID Salary Comm
+1234
+
+SCD --> which canges over a period of Time
+
+---------------------------------
+EmpID Ename Location HireDate
+1234  Sam   TX 	     20120101 			
+
+he moved to different location
+EmpID Ename Location HireDate
+1234  Sam   NC 	     20120101
+----------------------------------
+
+6types of SCD's
+-----------------
+
+Type 1 to 3 are used in real time
+but type 4 - 6 usage depends on requirements like how we need to store the data
+
+Hybried SCD -type 6  - which is combination of 1,2 and 3 which are maintained in a single dimention
+		     - it is design of the Dimention which will serve the perpose of scd 1,2 and 3	
+		     - when we are pulling data from the this type of dimention we will be pulling data as a multi dimentional data pull.	
+
+SCD type 1,2,and 3 will serve the most of the DWH projects; 
+
+SCD- Type1 -- Current data
+--------------
+
+	EmpID Ename Location HireDate
+	1234  Sam   TX 	     20120101 
+
+
+Current:
+---------
+	EmpID Ename Location HireDate
+	1234  Sam   NC 	     20120101 
+
+
+SCD- Type 2: -historical info
+---------------------------------
+Historical Date:
+	SurrogateKey EmpID Ename Location HireDate Start_date End_date
+		1     1234  Sam   TX 	     20120101 20120101	 20120701		100
+		2     1234  Sam   NC 	     20120101 20120701	 20130820					200 
+  		3     1234  Sam   Ch	     20120101 20130820	 		
+
+we have situation where we have to maintain multipal entry for a same key then we will maintain "SurrogateKey"; it is artificial primary key 
+"SurrogateKey"; it is artificial primary key which is not natural;here EmpID is natural id; SK ID is a another unique ID which can be genereated using sequence generator or any other methodlogy 
+--which helps to tag the record as unique
+
+to find the latest record we have 2 option
+1. to take a max of the SK grouping by EMPID
+2. to take a record which has End_date as 99991231(31-12-9999)
+
+we can do the same using Flaging and Number
+
+Historical Flaging(which gives current location and his previous location )
+------------
+Flags:
+	SurrogateKey	EmpID Ename Location HireDate Current_flag 
+	1		1234  Sam   TX 	     20120101  N		
+	2		1234  Sam   NC 	     20120101  N		
+	3		1234  Sam   Ch	     20120101  Y	 		
+
+Historical Version: (which will have running sequence no. max no. is a current record - and Current-1 are the previous locations )
+------------------------
+SurrogateKey	EmpID Ename Location HireDate Version 
+	1	1234  Sam   TX 	     20120101  1		
+	2	1234  Sam   NC 	     20120101  2		
+	3	1234  Sam   CH	     20120101  3
+
+
+Best/effictive way to maintain the History or SCD type 2 is using Start_date and End_date
+- we can get info like - duration an employee stayed at perticular location
+
+
+SCD - type 3:
+-------------------
+Current-1 -- at any given point of time we will have 2 entries for a perticular record
+
+	SurrogateKey EmpID Ename Location HireDate Start_date End_date
+		1     1234  Sam   TX 	     20120101 20120101	 20120701		100
+		2     1234  Sam   NC 	     20120101 20120701	 20130820					200 
+  		3     1234  Sam   CH	     20120101 20130820	 	
+
+
+SCD -type3:
+
+1.
+	SurrogateKey EmpID Ename Location HireDate Start_date End_date
+		2     1234  Sam   NC 	     20120101 20120701	 20130820					200 
+  		3     1234  Sam   CH	     20120101 20130820	 		
+	
+
+2.	
+	SurrogateKey EmpID Ename Location HireDate Start_date End_date
+  		3     1234  Sam   CA	   20120101 20130120   20130820	 	
+		4     1234  Sam   CH	   20120101 20130820	 	
+
+SK - is a primary key will continue with its sequence no.
+
+
+if need to maintain Historical datas and also have SCD type 3 in place we can go for (Start_data and End_date) and flags
+ - here we can combine SCD2 and SCD3
+ - here we will have a flage set to "Y" for "Current" and "current-1" and "N" for older records
+
+SCD type 2 and type 3 combined:
+---------------------------
+
+Historical Date:
+	SurrogateKey EmpID Ename Location HireDate Start_date    End_date  Current_Flag
+		1     1234  Sam   TX 	     20120101 20120101	 20120701   N		
+		2     1234  Sam   NC 	     20120101 20120701	 20130820   Y		
+  		3     1234  Sam   CH	     20120101 20130820	 	    Y	
+
+---------------------------------------------------------------------
+https://www.youtube.com/watch?v=Q7KHW2oCOUI
+--------------------------------------------------
+
+IN DWH terms
+
+Star schema:
+------------------------
+Dimension	Fact Table		Dimension
+-----------	------------		---------
+|Customer| --->	|Transaction|	<-------|Product|
+-----------	------------		---------
+		    ^
+		    |	
+		    | 		
+		------------
+	        | Courier|		
+       	        | Service|
+		------------
+		Dimension
+
+Fact Table
+----------------
+- has all the primary keys of the Dimensions and associated measures(like Price, commision)
+- In our scenario, please see our transaction table has all the dimension keys in it.
+- Measures are used to evaluate the profits/loss game.
+
+Dimension Table(vital points)
+--------------------------------
+- They are the true driving tables as they provide descriptive
+   information for all the measurements recorded in the fact
+- Dimensions have to be loaded first because you can't sell a product that doesn't exist
+- Dimensions are relatively very small in number in comparsion of fact table, Because a product or customer can buy multiple Times
+
+
+80% of the data is consumed by a fact table:
+
+Objective of data warehouse(OLTP)
+-------------------------------------
+- to leverage the data for precise and Effective decision making.
+- The Data in warehouse is persistent.
+
+Data flow
+---------
+OLTP System -> ODS(Operational data store) -> data warehouse-> DataMart(Specific Business Area)->Reporting
+
+Open Questions:
+1. what is an OLTP system
+2. What is ODS, why can't we report from an OLTP or ODS system?
+3. What is Data Mart?
+4. What are the Reporting tools
+5. Which are the underlaying tools involved
+
+
+-------------------------------------------
+https://www.youtube.com/watch?v=KUwOcip7Zzc
+------------------------------------------------
+Measures - which are numbers 
+Dimensions - which contains discription about the Measures
+
+StarShema - denormalized it pure 
+Snow flake desing - is normalized dimentions tables
+
+Difference b/w SnowFlake and StarSchema
+--------------------------------------------
+			SnowFlake					Star Schema
+			-------------------------------------   ---------------------------------------------
+Normalization		Can have normalized dimentsion  	Pure dnormalized dimension tables.
+				tables
+Maintenance		Less redundancy so less maintenance	More redundancy due to denormalized format so more maintenance
+Query			Complex queries due to normalized	Simple queries due to pure denormalized design.
+			dimension tables.	
+Joins			More joins due to normalization		Less joins.
+Usage guidelines	if you are concerned about integrity 	More than data integrity speed and performance is concern here.
+			and duplication. 
+
+
+SCD type2:
+------------------------------------------------------
+https://www.youtube.com/watch?v=XbqaeT6UHkw
+https://www.youtube.com/watch?v=XbqaeT6UHkw - Static lookup
+https://www.youtube.com/watch?v=PJlfzwyM0jk --dynamic lookup
+
+https://www.youtube.com/results?search_query=scd2+in+informatica -- in google
+----------------------------------------------------
+
+
+Lookup stratergy: Dynamic lookup
+
+----------------------------------------------
+https://www.youtube.com/watch?v=weFHPMjmj-A
+---------------------------------------------
+UNDER update stratergy - with Update stratergy only we can  update table
+DD_UPDATE
+DD_DELETE
+DD_INSERT
+DD_REJECT
+
+
+Dynamic cache - 
+	- during the execution only it will update the cache
+	- Cache will update first and than target will update
+	- with the execution cache is update; and if duplicates are found it is removed
+
+Static Cache - 
+	- first it will execute and later it will update Cache
+	- since it will update cache after the execution; hence it will not identify duplicates from source table
