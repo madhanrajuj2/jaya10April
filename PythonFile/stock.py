@@ -19,6 +19,6 @@ if __name__ == "__main__":
     c = GoogleFinanceAPI()
     
     while 1:
-        quote = c.get("MSFT","NASDAQ")
+        quote = c.get("MSFT","NASDAQ") #NSE:RELIANCE
         print quote
         time.sleep(30)
