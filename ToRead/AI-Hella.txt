@@ -1,0 +1,36 @@
+Controller:
+-------------------
+API.AI
+--------
+https://www.sitepoint.com/how-to-build-your-own-ai-assistant-using-api-ai/
+
+LuIS.AI
+----------
+Building a bot on MicroSoft
+https://www.youtube.com/watch?v=ibV-1DkfW3c
+
+
+Firebase --to store data in tree structure
+---------------
+https://firebase.google.com/docs/database/admin/start
+
+
+Hadoop on Google Cloude - setup video
+----------------------------------------------
+https://www.youtube.com/watch?v=ZQkL9bKd_40&list=PLCY4v0l5st2WIkg6wd2JXeUzqjmlihZgJ
+https://www.youtube.com/watch?v=eXNqjysG6xA
+
+
+-----------------------------------------------------------
+https://groups.google.com/forum/#!topic/firebase-talk/QQ6_S_BLMuk
+
+Relatively new Firebase user here, so take this with a grain of salt.
+
+By itself, I don't think Firebase is the right tool for BI/Big Data. Firebase seems like a great production data store because of it's speed, scaleability, etc., but those are production concerns. BI concerns tend to be a bit different; you often want to collect huge amounts of stateful data, then map-reduce it. That's a rather different problem.
+
+I think the solution is to integrate your Firebase with a BI/DW tool like Amazon Elastic Map Reduce or Google's Hadoop on CCE. It should be possible to set up a custom server to stream updates from Firebase to your Hadoop cluster. When the Hadoop jobs finish, you could push data back into Firebase in order to provide the application with a consistent API for data retrieval.
+
+That was all pretty hand-wavy, but long story short I don't think Firebase alone will solve the problem.
+
+Cheers,
+Simeon

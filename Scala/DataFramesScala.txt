@@ -636,6 +636,20 @@ var result = sqlContext.sql("select department_id, myUpper(department_name), mul
 
 result.show()
 
+----------------------
+
+def parse = (s: String) => {
+val format = new java.text.SimpleDateFormat("MM/dd/yyyy")
+var days =Array("Sun","Mon","Tue","Wed","Thu","Fri","Sat")
+val split = days(format.parse(s).getDay).toString
+split
+ 
+}
+ 
+sqlContext.udf.register("parsed",parse)
+
+----------------------
+
 scala UDF:
 -------------------
 // Let's define a UDF to do the filtering
