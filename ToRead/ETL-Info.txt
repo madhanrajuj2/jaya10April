@@ -125,6 +125,26 @@ if need to maintain Historical datas and also have SCD type 3 in place we can go
  - here we can combine SCD2 and SCD3
  - here we will have a flage set to "Y" for "Current" and "current-1" and "N" for older records
 
+-----------------------------
+https://www.youtube.com/watch?v=owo0QqDl8ck
+- here we can two columns for current and previous state(which ever columns are taken as logical key can be maintained as 2 separate columns in SCD3)
+
+SCD3:
+initialy
+-----------
+SK ENo EName Curr_Job Pre_Job Eff_date
+1  123 ram   mang     Null    22-july-17
+
+update emp set job='sales' where eno=123;
+commit;
+
+after update:
+-----------------
+SK ENo EName Curr_Job Pre_Job Eff_date
+1  123 ram   Sales     mang    22-july-17
+
+--------------------------------------------
+
 SCD type 2 and type 3 combined:
 ---------------------------
 
