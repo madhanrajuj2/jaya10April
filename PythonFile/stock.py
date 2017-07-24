@@ -22,3 +22,6 @@ if __name__ == "__main__":
         quote = c.get("MSFT","NASDAQ") #NSE:RELIANCE
         print quote
         time.sleep(30)
+		
+#https://www.quora.com/Is-there-a-real-time-stock-market-data-feed-API-for-NSE-BSE-Mcx-to-implement-in-our-custom-software
+#http://digitalpbk.com/stock/google-finance-get-stock-quote-realtime
