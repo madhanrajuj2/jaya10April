@@ -107,3 +107,7 @@ Hive Index:(edureka video 7: 30 Mins)
 To Read interview questions:
 ------------------------------
 http://hadooptutorial.info/real-time-hadoop-interview-questions-from-different-readers/
+
+Building a weather app using nodejs
+----------------------------------------------
+https://codeburst.io/build-a-weather-website-in-30-minutes-with-node-js-express-openweather-a317f904897b

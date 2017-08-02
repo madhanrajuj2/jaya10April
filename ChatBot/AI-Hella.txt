@@ -44,3 +44,13 @@ https://www.programmableweb.com/category/bots/api
 MS bot link
 -----------------------
 https://docs.microsoft.com/en-gb/bot-framework/rest-api/bot-framework-rest-connector-concepts
+
+
+Setting bot on Heroku
+-------------------------
+https://www.youtube.com/watch?v=bUwiKFTvmDQ
+--------------------------------------------
+Heroku login:
+---------------
+madhanraju.j1@gmail.com
+jayaram@123
