@@ -9,3 +9,21 @@ https://www.youtube.com/watch?v=pZQsDloGB4w
 8. why we need Hbase when we have Hive
 9. Avro file format advantages
 10. have you used compression
+
+
+11. different ways dataframe can be created
+- It can be created using different data formats. For example, loading the data from JSON, CSV.
+- Loading data from Existing RDD.
+- Programmatically specifying schema
+
+Good link to understand the concepts:
+------------------------------------------
+https://www.analyticsvidhya.com/blog/2016/10/spark-dataframe-and-operations/
+
+
+12. difference between RDD, DataFrame, DataSet
+
+13. Asked about partitions - (sqlContext.setConf("spark.sql.suffle.patitions","10"))
+  by default it will run 200 partitions
+
+14. Hive merge command
