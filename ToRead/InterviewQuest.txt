@@ -30,5 +30,69 @@ https://www.analyticsvidhya.com/blog/2016/10/spark-dataframe-and-operations/
 
 15. what are different transformations you have used.
 16. different stages once the file is read in Spark.
+
+	We can see that in action in the following toy example in which we do the following types of operations:
+
+	-load two datasources
+	-perform some map operation on both of the data sources separately
+	-join them
+	-perform some map and filter operations on the result
+	-save the result	
+
+So then how many stages will we end up with?
+
+1 stage each for loading the two datasources in parallel = 2 stages
+A third stage representing the join that is dependent on the other two stages
+Note: all of the follow-on operations working on the joined data may be performed in the same stage because they must happen sequentially. There is no benefit to launching additional stages because they can not start work until the prior operation were completed.
+
+
+Stage 0 	Stage 1		Stage 2
+--------	--------	---------
+Textfile	Parallelize	Join
+|				|
+|				|
+Map				MapPartitions	
+				|
+				|
+				Filter
+				|
+				|
+				SaveAsTextFile
+
+
+This might help you better understand different pieces:
+
+-Stage: is a collection of tasks. Same process running against different subsets of data (partitions).
+-Task: represents a unit of work on a partition of a distributed dataset. So in each stage, number-of-tasks = number-of-partitions, or as you said "one task per stage per partition”.
+-Each executer runs on one yarn container, and each container resides on one node.
+-Each stage utilizes multiple executers, each executer is allocated multiple vcores.
+-Each vcore can execute exactly one task at a time
+-So at any stage, multiple tasks could be executed in parallel. number-of-tasks running = number-of-vcores being used.
+
+
 17. what is Trace in Scala
+	- Traits
+	  Traits are used to share interfaces and fields between classes. They are similar to Java 8’s interfaces. Classes and objects can extend traits but traits cannot be instantiated and therefore have no parameters. 	
+	- Higher order function
+	  function which are functions that take other functions as parameters
+		Ex: println(sum(sqr,1,10))
+		"sum" is now a higher order function; it's first parameter is a function which maps a Int to an Int
+		
+		def identity(x: Int) = x
+		def sum(f: Int=>Int, a: Int, b: Int): Int =
+		 if (a == b) f(a) else f(a) + sum(f,a + 1, b)
+		
+
+		println(sum(identity, 1, 10))
+		
+		
 18. functional programing
+	-When you anticipate a different kind of software evolution:
+
+	Object-oriented languages are good when you have a fixed set of operations on things, and as your code evolves, you primarily add new things. This can be accomplished by adding new classes which implement existing methods, and the existing classes are left alone.
+	Functional languages are good when you have a fixed set of things, and as your code evolves, you primarily add new operations on existing things. This can be accomplished by adding new functions which compute with existing data types, and the existing functions are left alone.
+	
+	-When evolution goes the wrong way, you have problems:
+
+	Adding a new operation to an object-oriented program may require editing many class definitions to add a new method.
+	Adding a new kind of thing to a functional program may require editing many function definitions to add a new case.
