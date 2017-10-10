@@ -27,8 +27,13 @@ https://www.analyticsvidhya.com/blog/2016/10/spark-dataframe-and-operations/
   by default it will run 200 partitions
 
 14. Hive merge command
+    
 
 15. what are different transformations you have used.
+    agg
+    sort
+    filtering
+    join
 16. different stages once the file is read in Spark.
 
 	We can see that in action in the following toy example in which we do the following types of operations:
