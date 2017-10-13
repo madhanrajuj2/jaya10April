@@ -1,3 +1,7 @@
+Udemy Notes:
+---------------------
+http://nbviewer.jupyter.org/github/jmportilla
+
 To Read:
 -------------------
 Hadoop Application Architectures by Gwen Shapira, Jonathan Seidman, Ted Malaska, Mark Grover

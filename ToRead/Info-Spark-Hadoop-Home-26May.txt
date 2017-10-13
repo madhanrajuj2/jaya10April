@@ -115,7 +115,7 @@ Evolution of Hadoop eco system
 - Big Table to HBase
 
 Use Cases that can be addressed using Hadoop Eco System
-------------------------------------------------------
+-------------------------------------------------------
 - ETL - Extract, transformation and load
 - Real time reporting (HBase)
 - Batch reporting(Telephone bill to customer)
@@ -3451,8 +3451,106 @@ Itversity - OOzie explanation
 Big Data Certifications Workshop 034 - Oozie Workflows
 https://www.youtube.com/watch?v=AipQjQTU9iY
 
-WorkFlow.xml - 
+oozie server is where we submit the "workflows"
+- execution engine is MapRedue
+
+replacement to oozie
+Azkaban -- linkedin
+Airflow
+
+kafka - linkedin
+
+cd /usr/hdp/2.5.0.0-1245/oozie/doc/oozie-examples.tar.gz
+
+tar xzf oozie-examples.tar.gz
+x- extract the tar
+z - uncompress
+
+cd examples
+cd apps
+
+
+
+
+WorkFlow.xml - job/programs to execute
 job.properties - configuration file for our work flow
+
+
+oozie user guide
+---------------------
+check whether you can connect to oozie
+
+oozie admin --oozie http://nn01.itversity.com:11000/oozie -status
+oozie admin --oozie http://nn01.itversity.com:11000/oozie -version
+4.2.0
+
+cd /etc ---all configuration files are stored under etc
+
+
+job.properties
+---------------------------------------------------------
+nameNode=hdfs://nn01.itversity.com:8020
+#fs.defaultsFS in core-site.xml for nameNode path -/etc/hadoop/config
+jobTracker=rm01.itversity.com:8050
+#yarn.resourcemanager.address in yarn-site.xml for jobTracker
+queueName=default
+examplesRoot=oozie_example
+
+oozie.wf.application.path=${nameNode}/user/${user.name}/${exampleRoot}/java-main
+-----------------------------------------------------------
+#oozie.wf.application.path=hdfs://nn01.itversity.com:8020/user/dgadiraju/oozie_examples/java-main
+#we need to have java-main folder in following path else it won't execute "hdfs://nn01.itversity.com:8020/user/dgadiraju/oozie_examples/java-main"
+
+oozie.wf.application.path ##integration b/w the job.properties and execution is "oozie.wf.application.path"
+
+copy to hdfs----
+hadoop fs -put java-main /user/dgadiraju/oozie_examples/.
+
+to execute the job--------
+oozie job -oozie http://nn01.itversity.com:11000/oozie -config /home/dgadiraju/oozie_demo/examples/apps/java-main/job.properties -run
+
+you get the oozie id
+oozie id
+job:jdkjkdjd;lkldkl
+
+to get the info:
+-------------------
+oozie job -oozie http://nn01.itversity.com:11000/oozie -info <Job-ID>
+
+
+1.44 --creating a workflow
+
+Video 35:
+-------------------
+oozie workflow- with multipal jobs(real time)
+-----------------------------------
+https://www.youtube.com/watch?v=D6l1102Z1nc
+
+
+job.properties
+-------------------
+
+nameNode=hdfs://nn01.itversity.com:8020
+#fs.defaultsFS in core-site.xml for nameNode path -/etc/hadoop/config
+jobTracker=rm01.itversity.com:8050
+#yarn.resourcemanager.address in yarn-site.xml for jobTracker
+queueName=default
+jdbcURL=jdbc:hive2://nn01.itversity.com:10000/dgadiraju
+
+oozie.user.system.libpath=true //to use the oozie lib like jdbc jar file we have to set this
+#1. we need to copy oozie connecter jdbc.jar file under /user/oozie/share/lib/lib_20161114194124
+#2. update job.properties with "oozie.user.system.libpath=true"
+#3. need to run this command as admin --if we get class not found
+#sudo -u oozie oozie admin -oozie http://nn01.itversity.com:11000/oozie -sharelibupdate
+
+oozie.wf.application.path = ${nameNode}/user/${user.name}/daily_revenue
+----------------------------------------------------------------
+
+
+
+
+
+
 
 
 https://www.youtube.com/watch?v=Y1Fvz9tgdA8 -- Cloudera quick start ---go through it
@@ -3497,6 +3595,8 @@ Itversity
 Apache Spark - Streaming using Twitter
 ----------------------------------------
 https://www.youtube.com/watch?v=1GixYso8Az4
+
+
 
 
 Flume explanation --good one
