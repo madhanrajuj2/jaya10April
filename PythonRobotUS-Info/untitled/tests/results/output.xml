@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20171030 10:37:08.665" generator="Robot 3.0.2 (Python 2.7.11rc1 on win32)">
+<suite source="E:\Python\untitled\tests\TestRobot.robot" id="s1" name="TestRobot">
+<test id="s1-t1" name="AddOperation">
+<kw name="MathOp">
+<arguments>
+<arg>10</arg>
+<arg>10</arg>
+</arguments>
+<kw name="Math Op Query" library="MathOpTest">
+<arguments>
+<arg>${expression}</arg>
+</arguments>
+<msg timestamp="20171030 10:37:08.713" level="INFO">10</msg>
+<status status="PASS" endtime="20171030 10:37:08.713" starttime="20171030 10:37:08.713"></status>
+</kw>
+<kw name="Result Validate" library="MathOpTest">
+<arguments>
+<arg>${expected}</arg>
+</arguments>
+<msg timestamp="20171030 10:37:08.714" level="INFO">10
+10</msg>
+<status status="PASS" endtime="20171030 10:37:08.714" starttime="20171030 10:37:08.714"></status>
+</kw>
+<status status="PASS" endtime="20171030 10:37:08.714" starttime="20171030 10:37:08.712"></status>
+</kw>
+<status status="PASS" endtime="20171030 10:37:08.714" critical="yes" starttime="20171030 10:37:08.712"></status>
+</test>
+<test id="s1-t2" name="subtraction">
+<kw name="MathOp">
+<arguments>
+<arg>10</arg>
+<arg>2</arg>
+</arguments>
+<kw name="Math Op Query" library="MathOpTest">
+<arguments>
+<arg>${expression}</arg>
+</arguments>
+<msg timestamp="20171030 10:37:08.717" level="INFO">10</msg>
+<status status="PASS" endtime="20171030 10:37:08.717" starttime="20171030 10:37:08.716"></status>
+</kw>
+<kw name="Result Validate" library="MathOpTest">
+<arguments>
+<arg>${expected}</arg>
+</arguments>
+<msg timestamp="20171030 10:37:08.717" level="INFO">2
+---False----</msg>
+<msg timestamp="20171030 10:37:08.718" level="FAIL">Test Fail</msg>
+<status status="FAIL" endtime="20171030 10:37:08.718" starttime="20171030 10:37:08.717"></status>
+</kw>
+<status status="FAIL" endtime="20171030 10:37:08.718" starttime="20171030 10:37:08.716"></status>
+</kw>
+<status status="FAIL" endtime="20171030 10:37:08.719" critical="yes" starttime="20171030 10:37:08.715">Test Fail</status>
+</test>
+<doc>Testing Robot features
+
+The _data-driven_ style works well when you need to repeat
+the same workflow multiple times.
+</doc>
+<status status="FAIL" endtime="20171030 10:37:08.719" starttime="20171030 10:37:08.671"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="1">Critical Tests</stat>
+<stat fail="1" pass="1">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="TestRobot" pass="1">TestRobot</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

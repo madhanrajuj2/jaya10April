@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20171106 10:10:22.650" generator="Robot 3.0.2 (Python 2.7.11rc1 on win32)">
+<suite source="E:\Python\untitled\tests\TestingRestAPI.robot" id="s1" name="TestingRestAPI">
+<test id="s1-t1" name="Example REST JSON">
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>${SERVICE_NAME}</arg>
+<arg>${SERVICE_ROOT}</arg>
+</arguments>
+<msg timestamp="20171106 10:10:27.686" level="INFO">Creating Session using : alias=testing, url=http://ip.jsontest.com/, headers={},                     cookies=None, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" endtime="20171106 10:10:27.687" starttime="20171106 10:10:27.686"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/json</arg>
+<arg>Accept=application/json</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20171106 10:10:27.688" level="INFO">${headers} = {u'Content-Type': u'application/json', u'Accept': u'application/json'}</msg>
+<status status="PASS" endtime="20171106 10:10:27.688" starttime="20171106 10:10:27.688"></status>
+</kw>
+<kw name="Get Request" library="RequestsLibrary">
+<doc>Send a GET request on the session object found using the</doc>
+<arguments>
+<arg>${SERVICE_NAME}</arg>
+<arg>${SERVICE_ROOT}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<assign>
+<var>${result}</var>
+</assign>
+<msg timestamp="20171106 10:10:28.105" level="INFO">Get Request using : alias=testing, uri=http://ip.jsontest.com/, headers={u'Content-Type': u'application/json', u'Accept': u'application/json'} json=None</msg>
+<msg timestamp="20171106 10:10:28.105" level="INFO">${result} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20171106 10:10:28.106" starttime="20171106 10:10:27.689"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${result.status_code}</arg>
+<arg>${200}</arg>
+</arguments>
+<status status="PASS" endtime="20171106 10:10:28.108" starttime="20171106 10:10:28.106"></status>
+</kw>
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${result.content}</arg>
+</arguments>
+<msg timestamp="20171106 10:10:28.109" level="INFO">{"ip": "2605:6000:8b48:c000:18d1:4894:fdd9:b445"}
+</msg>
+<status status="PASS" endtime="20171106 10:10:28.110" starttime="20171106 10:10:28.108"></status>
+</kw>
+<kw name="To Json" library="RequestsLibrary">
+<doc>Convert a string to a JSON object</doc>
+<arguments>
+<arg>${result.content}</arg>
+</arguments>
+<assign>
+<var>${json}</var>
+</assign>
+<msg timestamp="20171106 10:10:28.111" level="INFO">To JSON using : content={"ip": "2605:6000:8b48:c000:18d1:4894:fdd9:b445"}
+ </msg>
+<msg timestamp="20171106 10:10:28.111" level="INFO">To JSON using : pretty_print=False </msg>
+<msg timestamp="20171106 10:10:28.112" level="INFO">${json} = {u'ip': u'2605:6000:8b48:c000:18d1:4894:fdd9:b445'}</msg>
+<status status="PASS" endtime="20171106 10:10:28.112" starttime="20171106 10:10:28.110"></status>
+</kw>
+<kw name="To Json" library="RequestsLibrary">
+<doc>Convert a string to a JSON object</doc>
+<arguments>
+<arg>${result.content}</arg>
+<arg>pretty_print=True</arg>
+</arguments>
+<assign>
+<var>${pp}</var>
+</assign>
+<msg timestamp="20171106 10:10:28.114" level="INFO">To JSON using : content={"ip": "2605:6000:8b48:c000:18d1:4894:fdd9:b445"}
+ </msg>
+<msg timestamp="20171106 10:10:28.114" level="INFO">To JSON using : pretty_print=True </msg>
+<msg timestamp="20171106 10:10:28.115" level="INFO">${pp} = {
+    "ip": "2605:6000:8b48:c000:18d1:4894:fdd9:b445"
+}</msg>
+<status status="PASS" endtime="20171106 10:10:28.115" starttime="20171106 10:10:28.112"></status>
+</kw>
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${pp}</arg>
+</arguments>
+<msg timestamp="20171106 10:10:28.116" level="INFO">{
+    "ip": "2605:6000:8b48:c000:18d1:4894:fdd9:b445"
+}</msg>
+<status status="PASS" endtime="20171106 10:10:28.116" starttime="20171106 10:10:28.115"></status>
+</kw>
+<kw name="json_property_should_equal">
+<arguments>
+<arg>${json}</arg>
+<arg>ip</arg>
+<arg>2605:6000:8b48:c000:943a:63d7:48b1:2fea</arg>
+</arguments>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${property}</arg>
+</arguments>
+<assign>
+<var>${value_found}</var>
+</assign>
+<msg timestamp="20171106 10:10:28.119" level="INFO">${value_found} = 2605:6000:8b48:c000:18d1:4894:fdd9:b445</msg>
+<status status="PASS" endtime="20171106 10:10:28.120" starttime="20171106 10:10:28.118"></status>
+</kw>
+<kw name="Catenate" library="BuiltIn">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>SEPARATOR=</arg>
+<arg>Expected value for property "</arg>
+<arg>${property}</arg>
+<arg>" was "</arg>
+<arg>${value_expected}</arg>
+<arg>" but found "</arg>
+<arg>${value_found}</arg>
+<arg>"</arg>
+</arguments>
+<assign>
+<var>${error_message}</var>
+</assign>
+<msg timestamp="20171106 10:10:28.122" level="INFO">${error_message} = Expected value for property "ip" was "2605:6000:8b48:c000:943a:63d7:48b1:2fea" but found "2605:6000:8b48:c000:18d1:4894:fdd9:b445"</msg>
+<status status="PASS" endtime="20171106 10:10:28.122" starttime="20171106 10:10:28.120"></status>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<arguments>
+<arg>${value_found}</arg>
+<arg>${value_expected}</arg>
+<arg>${error_message}</arg>
+<arg>values=false</arg>
+</arguments>
+<msg timestamp="20171106 10:10:28.124" level="FAIL">Expected value for property "ip" was "2605:6000:8b48:c000:943a:63d7:48b1:2fea" but found "2605:6000:8b48:c000:18d1:4894:fdd9:b445"</msg>
+<status status="FAIL" endtime="20171106 10:10:28.124" starttime="20171106 10:10:28.122"></status>
+</kw>
+<status status="FAIL" endtime="20171106 10:10:28.125" starttime="20171106 10:10:28.117"></status>
+</kw>
+<doc>Testing functionality of Robot</doc>
+<tags>
+<tag>REST</tag>
+</tags>
+<status status="FAIL" endtime="20171106 10:10:28.125" critical="yes" starttime="20171106 10:10:27.685">Expected value for property "ip" was "2605:6000:8b48:c000:943a:63d7:48b1:2fea" but found "2605:6000:8b48:c000:18d1:4894:fdd9:b445"</status>
+</test>
+<status status="FAIL" endtime="20171106 10:10:28.127" starttime="20171106 10:10:22.657"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+<stat fail="1" pass="0">REST</stat>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="TestingRestAPI" pass="0">TestingRestAPI</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20171106 10:10:27.677" level="WARN">XML library reverted to use standard ElementTree because lxml module is not installed.</msg>
+</errors>
+</robot>
